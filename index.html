@@ -17,51 +17,27 @@
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4}
 
-/* ═══ BUFF ANIMATIONS ═══════════════════════════════════════════════ */
-body.buff-fuel {
-  animation: lightning-flash 2s infinite;
-}
-@keyframes lightning-flash {
-  0%, 100% { box-shadow: inset 0 0 30px #dfff00; }
-  10%, 90%  { box-shadow: inset 0 0 80px #ffffff; }
-  15%       { box-shadow: inset 0 0 100px #dfff00, 0 0 40px #ffffff; }
-}
+/* ═══ BUFF ANIMATIONS — JS-driven, CSS only for unfiltered ══════════ */
 body.buff-unfiltered {
   box-shadow: inset 0 0 50px #f472b6;
   background-image:
     linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
     linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
   background-size: 100% 4px, 3px 100%;
+  animation: unfiltered-pulse 4s ease-in-out infinite;
 }
-body.buff-detox {
-  animation: detox-pulse 3s infinite;
+@keyframes unfiltered-pulse {
+  0%,100% { box-shadow: inset 0 0 40px #f472b6; }
+  50%      { box-shadow: inset 0 0 90px #f472b6, 0 0 30px #f472b655; }
 }
-@keyframes detox-pulse {
-  0%, 100% { box-shadow: inset 0 0 20px #4ade80; filter: saturate(0.6); }
-  50%       { box-shadow: inset 0 0 60px #4ade80; filter: saturate(0.2); }
+/* Effect containers — all other buffs are injected DOM elements */
+.buff-effect-layer {
+  position: fixed; inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 9998;
 }
-body.buff-focus {
-  animation: focus-scan 1.5s infinite;
-}
-@keyframes focus-scan {
-  0%   { box-shadow: inset 0 0 0px #38bdf8; }
-  50%  { box-shadow: inset 0 0 60px #38bdf8, inset 0 2px 0 #38bdf8; }
-  100% { box-shadow: inset 0 0 0px #38bdf8; }
-}
-body.buff-gratitude {
-  animation: gratitude-glow 4s ease-in-out infinite;
-}
-@keyframes gratitude-glow {
-  0%, 100% { box-shadow: inset 0 0 30px #a78bfa; filter: hue-rotate(0deg); }
-  50%       { box-shadow: inset 0 0 80px #f472b6; filter: hue-rotate(20deg); }
-}
-body.buff-stakeholder {
-  animation: stakeholder-shimmer 2.5s infinite;
-}
-@keyframes stakeholder-shimmer {
-  0%, 100% { box-shadow: inset 0 0 40px #a78bfa55, 0 0 20px #a78bfa33; }
-  50%       { box-shadow: inset 0 0 80px #a78bfa99, 0 0 40px #a78bfa66; }
-}
+.buff-effect-layer.blend-screen { mix-blend-mode: screen; }
 
 /* ═══ PERMANENT THEMES ═══════════════════════════════════════════════ */
 body.theme-highvis {
@@ -676,13 +652,13 @@ const STAKES = {
 // ─── STORE ITEMS ──────────────────────────────────────────────────────────────
 const BASE_STORE_ITEMS = [
   // ── CONSUMABLES ──
-  { id: 'unfiltered_hour',  name: 'Unfiltered Hour',   desc: '60 mins of guilt-free dopamine. No tracking, no accountability.',           basePrice: 500,  tier: 'consumable', emoji: '🎮', buffClass: 'buff-unfiltered', buffLabel: 'UNFILTERED HOUR ACTIVE',  buffColor: '#f472b6' },
-  { id: 'fuel_upgrade',     name: 'Fuel Upgrade',       desc: 'Unlocks a premium meal or high-performance caffeine protocol.',              basePrice: 750,  tier: 'consumable', emoji: '⚡', buffClass: 'buff-fuel',       buffLabel: 'FUEL PROTOCOL ACTIVE',    buffColor: '#dfff00' },
-  { id: 'digital_detox',   name: 'Digital Detox',      desc: 'Sanctioned screen-free block. Clears cognitive backlog.',                   basePrice: 500,  tier: 'consumable', emoji: '🌿', buffClass: 'buff-detox',      buffLabel: 'DETOX MODE ACTIVE',       buffColor: '#4ade80' },
-  { id: 'focus_stream',    name: 'Focus Stream',        desc: 'Deep work block with zero interruption tolerance. 90-min protocol.',        basePrice: 750,  tier: 'consumable', emoji: '🎯', buffClass: 'buff-focus',      buffLabel: 'FOCUS STREAM ACTIVE',     buffColor: '#38bdf8' },
-  { id: 'gratitude_audit', name: 'Gratitude Audit',    desc: 'Forced perspective reset. Operational clarity tool.',                       basePrice: 400,  tier: 'consumable', emoji: '🫁', buffClass: 'buff-gratitude',  buffLabel: 'GRATITUDE AUDIT ACTIVE',  buffColor: '#a78bfa' },
+  { id: 'unfiltered_hour',  name: 'Unfiltered Hour',   desc: '60 mins of guilt-free dopamine. No tracking, no accountability.',           basePrice: 500,  tier: 'consumable', emoji: '🎮', buffClass: 'buff-unfiltered', buffLabel: 'UNFILTERED HOUR ACTIVE',      buffColor: '#f472b6', duration: 60  },
+  { id: 'fuel_upgrade',     name: 'Fuel Upgrade',       desc: 'Unlocks a premium meal or high-performance caffeine protocol.',              basePrice: 750,  tier: 'consumable', emoji: '⚡', buffClass: 'buff-fuel',       buffLabel: 'FUEL PROTOCOL ACTIVE',        buffColor: '#dfff00', duration: 30  },
+  { id: 'digital_detox',   name: 'Digital Detox',      desc: 'Sanctioned screen-free block. Clears cognitive backlog.',                   basePrice: 500,  tier: 'consumable', emoji: '🌿', buffClass: 'buff-detox',      buffLabel: 'DETOX MODE ACTIVE',           buffColor: '#4ade80', duration: 90  },
+  { id: 'focus_stream',    name: 'Focus Stream',        desc: 'Deep work block with zero interruption tolerance. 90-min protocol.',        basePrice: 750,  tier: 'consumable', emoji: '🎯', buffClass: 'buff-focus',      buffLabel: 'FOCUS STREAM ACTIVE',         buffColor: '#38bdf8', duration: 90  },
+  { id: 'gratitude_audit', name: 'Gratitude Audit',    desc: 'Forced perspective reset. Operational clarity tool.',                       basePrice: 400,  tier: 'consumable', emoji: '🫁', buffClass: 'buff-gratitude',  buffLabel: 'GRATITUDE AUDIT ACTIVE',      buffColor: '#a78bfa', duration: 20  },
   // ── MEDIUM ──
-  { id: 'stakeholder_bonus',  name: 'Stakeholder Dinner',   desc: 'Unlocks a date night. Capital well spent.',                                basePrice: 4000, tier: 'medium', emoji: '🥂', buffClass: 'buff-stakeholder', buffLabel: 'STAKEHOLDER EVENT ACTIVATED', buffColor: '#a78bfa' },
+  { id: 'stakeholder_bonus',  name: 'Stakeholder Dinner',   desc: 'Unlocks a date night. Capital well spent.',                                basePrice: 4000, tier: 'medium', emoji: '🥂', buffClass: 'buff-stakeholder', buffLabel: 'STAKEHOLDER EVENT ACTIVATED', buffColor: '#a78bfa', duration: 180 },
   { id: 'performance_tech',   name: 'Performance Tech',      desc: 'New gear that optimizes site performance. Tools that pay for themselves.', basePrice: 5000, tier: 'medium', emoji: '🔧', buffClass: null, buffLabel: null, buffColor: null },
   { id: 'consultant_review',  name: 'Consultant Review',     desc: 'External audit of operations. Blind spots identified, protocols updated.', basePrice: 4500, tier: 'medium', emoji: '📋', buffClass: null, buffLabel: null, buffColor: null },
   { id: 'hardware_refresh',   name: 'Hardware Refresh',      desc: 'Peripheral or setup upgrade. Marginal gains compound.',                   basePrice: 5000, tier: 'medium', emoji: '💻', buffClass: null, buffLabel: null, buffColor: null },
@@ -760,7 +736,8 @@ function showToast(msg, dur=2200, negative=false) {
 
 // ─── INFLATION & STAKES MATH ──────────────────────────────────────────────────
 function getInflationFactor() {
-  return 1 + Math.floor((S.lifetimeEarned || 0) / 1000) * 0.05;
+  const raw = 1 + Math.floor((S.lifetimeEarned || 0) / 1000) * 0.05;
+  return Math.min(raw, 1.50); // hard cap at +50%
 }
 function getInflatedPrice(basePrice) {
   return Math.round(basePrice * getInflationFactor());
@@ -1318,24 +1295,291 @@ Log: "${log||'nothing'}"
 }
 
 // ─── ACTIVE BUFF BAR ──────────────────────────────────────────────────────────
+let _buffTickInterval = null;
+
 function renderBuffBar() {
-  const bar=document.getElementById('active-buffs-bar'); if (!bar) return;
-  const today=todayStr();
-  const activeItems=BASE_STORE_ITEMS.filter(item=>item.buffLabel&&S.activeBuffs&&S.activeBuffs[item.id]===today);
-  // Re-apply buff body classes on reload
-  BASE_STORE_ITEMS.filter(i=>i.buffClass).forEach(i=>document.body.classList.remove(i.buffClass));
-  activeItems.filter(i=>i.buffClass).forEach(i=>document.body.classList.add(i.buffClass));
-  if (!activeItems.length) { bar.style.display='none'; return; }
-  bar.style.display='flex';
-  bar.innerHTML='<span style="font-size:0.6rem;color:var(--muted);font-family:\'Space Mono\',monospace;letter-spacing:2px;white-space:nowrap">ACTIVE BUFFS</span>';
-  activeItems.forEach(item=>{
-    const chip=document.createElement('span');
-    chip.style.cssText=`background:${item.buffColor}18;border:1px solid ${item.buffColor}55;border-radius:4px;padding:3px 10px;font-size:0.62rem;font-family:'Space Mono',monospace;font-weight:700;color:${item.buffColor};letter-spacing:1px;white-space:nowrap`;
-    chip.textContent=`▶ ${item.buffLabel}`;
+  const bar = document.getElementById('active-buffs-bar');
+  if (!bar) return;
+  const now = Date.now();
+  const activeItems = BASE_STORE_ITEMS.filter(item =>
+    item.buffLabel && S.activeBuffs && S.activeBuffs[item.id] && S.activeBuffs[item.id].expires > now
+  );
+
+  // Re-apply CSS buff classes and JS effects on reload
+  BASE_STORE_ITEMS.filter(i => i.buffClass).forEach(i => document.body.classList.remove(i.buffClass));
+  activeItems.filter(i => i.buffClass).forEach(i => {
+    document.body.classList.add(i.buffClass);
+    if (!document.getElementById('effect-' + i.id)) startBuffEffect(i.id);
+  });
+  // Kill effects for expired buffs
+  BASE_STORE_ITEMS.filter(i => !activeItems.find(a => a.id === i.id)).forEach(i => stopBuffEffect(i.id));
+
+  if (_buffTickInterval) { clearInterval(_buffTickInterval); _buffTickInterval = null; }
+
+  if (!activeItems.length) { bar.style.display = 'none'; return; }
+
+  bar.style.display = 'flex';
+  bar.innerHTML = '<span style="font-size:0.6rem;color:var(--muted);font-family:\'Space Mono\',monospace;letter-spacing:2px;white-space:nowrap;margin-right:4px">ACTIVE BUFFS</span>';
+
+  activeItems.forEach(item => {
+    const chip = document.createElement('div');
+    chip.style.cssText = `display:flex;align-items:center;gap:8px;background:${item.buffColor}18;border:1px solid ${item.buffColor}55;border-radius:4px;padding:4px 10px;`;
+    chip.innerHTML = `
+      <span style="font-size:0.6rem;font-family:'Space Mono',monospace;font-weight:700;color:${item.buffColor};letter-spacing:1px;white-space:nowrap">▶ ${item.buffLabel}</span>
+      <span id="buff-timer-${item.id}" style="font-size:0.62rem;font-family:'Space Mono',monospace;color:${item.buffColor};opacity:0.75;white-space:nowrap;min-width:38px;text-align:right">--:--</span>
+    `;
     bar.appendChild(chip);
   });
+
+  function tick() {
+    const t = Date.now();
+    let anyActive = false;
+    activeItems.forEach(item => {
+      const timerEl = document.getElementById('buff-timer-' + item.id);
+      const buffData = S.activeBuffs[item.id];
+      if (!buffData || !timerEl) return;
+      const remaining = buffData.expires - t;
+      if (remaining <= 0) {
+        delete S.activeBuffs[item.id];
+        document.body.classList.remove(item.buffClass);
+        stopBuffEffect(item.id);
+        saveUserSettings();
+        renderBuffBar();
+        return;
+      }
+      anyActive = true;
+      const m = Math.floor(remaining / 60000);
+      const s = Math.floor((remaining % 60000) / 1000);
+      timerEl.textContent = `${m}:${String(s).padStart(2,'0')}`;
+      // Pulse red in last 5 minutes
+      timerEl.style.color = remaining < 300000 ? 'var(--red)' : item.buffColor;
+    });
+    if (!anyActive) { clearInterval(_buffTickInterval); _buffTickInterval = null; }
+  }
+
+  tick();
+  _buffTickInterval = setInterval(tick, 1000);
+}
+// ─── BUFF VISUAL EFFECTS ──────────────────────────────────────────────────────
+function startBuffEffect(itemId) {
+  const fns = {
+    fuel_upgrade:     startLightningEffect,
+    digital_detox:    startFlowerEffect,
+    focus_stream:     startLaserEffect,
+    gratitude_audit:  startGratitudeEffect,
+    stakeholder_bonus:startStakeholderEffect,
+  };
+  if (fns[itemId]) fns[itemId]();
 }
 
+function stopBuffEffect(itemId) {
+  const el = document.getElementById('effect-' + itemId);
+  if (!el) return;
+  if (el._interval) clearInterval(el._interval);
+  if (el._timeout) clearTimeout(el._timeout);
+  el.remove();
+}
+
+function startLightningEffect() {
+  stopBuffEffect('fuel_upgrade');
+  const container = document.createElement('div');
+  container.id = 'effect-fuel_upgrade';
+  container.className = 'buff-effect-layer blend-screen';
+  document.body.appendChild(container);
+
+  function makeBolt() {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const x = Math.random() * window.innerWidth;
+    const h = window.innerHeight;
+    svg.style.cssText = `position:absolute;left:${x}px;top:0;width:80px;height:${h}px;overflow:visible;opacity:0;transition:opacity 0.05s`;
+    svg.setAttribute('viewBox', `0 0 80 ${h}`);
+
+    // Jagged lightning path
+    const pts = [];
+    let cx = 40, cy = 0; pts.push([cx, cy]);
+    const segs = 14;
+    for (let i = 1; i <= segs; i++) {
+      cx += (Math.random() - 0.5) * 50; cx = Math.max(2, Math.min(78, cx));
+      cy = (i / segs) * h; pts.push([cx, cy]);
+    }
+    const d = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+
+    const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
+    const filter = document.createElementNS('http://www.w3.org/2000/svg','filter');
+    filter.id = 'lglow_' + Math.random().toString(36).slice(2);
+    filter.innerHTML = `<feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>`;
+    defs.appendChild(filter);
+
+    // Main bolt
+    const main = document.createElementNS('http://www.w3.org/2000/svg','path');
+    main.setAttribute('d', d); main.setAttribute('fill','none');
+    main.setAttribute('stroke','#dfff00'); main.setAttribute('stroke-width','2.5');
+    main.setAttribute('filter',`url(#${filter.id})`);
+    // White core
+    const core = document.createElementNS('http://www.w3.org/2000/svg','path');
+    core.setAttribute('d', d); core.setAttribute('fill','none');
+    core.setAttribute('stroke','#ffffff'); core.setAttribute('stroke-width','1');
+
+    svg.appendChild(defs); svg.appendChild(main); svg.appendChild(core);
+    container.appendChild(svg);
+
+    // Flash sequence: on → dim → on → off
+    requestAnimationFrame(() => {
+      svg.style.opacity = '1';
+      setTimeout(() => { svg.style.opacity = '0.3'; }, 60);
+      setTimeout(() => { svg.style.opacity = '1'; }, 100);
+      setTimeout(() => { svg.style.opacity = '0'; svg.style.transition='opacity 0.1s'; }, 150);
+      setTimeout(() => { svg.remove(); }, 280);
+    });
+  }
+
+  function scheduleBolt() {
+    if (!document.getElementById('effect-fuel_upgrade')) return;
+    makeBolt();
+    // Occasional double-strike
+    if (Math.random() > 0.5) setTimeout(makeBolt, 60 + Math.random() * 80);
+    container._timeout = setTimeout(scheduleBolt, 800 + Math.random() * 2200);
+  }
+  scheduleBolt();
+}
+
+function startFlowerEffect() {
+  stopBuffEffect('digital_detox');
+  const container = document.createElement('div');
+  container.id = 'effect-digital_detox';
+  container.className = 'buff-effect-layer';
+  document.body.appendChild(container);
+
+  const FLOWERS = ['🌸','🌺','🌻','🌼','🌷','💐','🍀','🌿'];
+
+  function spawnFlower() {
+    if (!document.getElementById('effect-digital_detox')) return;
+    const el = document.createElement('div');
+    const size = 1.2 + Math.random() * 1.8;
+    const startX = Math.random() * 100;
+    const drift  = (Math.random() - 0.5) * 120;
+    const dur    = 5000 + Math.random() * 4000;
+    el.style.cssText = `position:absolute;bottom:-3rem;left:${startX}vw;font-size:${size}rem;user-select:none;`;
+    el.textContent = FLOWERS[Math.floor(Math.random() * FLOWERS.length)];
+    container.appendChild(el);
+
+    el.animate([
+      { transform: `translate(0, 0) rotate(0deg) scale(0.3)`, opacity: 0 },
+      { transform: `translate(${drift/3}px, -25vh) rotate(${drift/2}deg) scale(1)`, opacity: 0.9, offset: 0.15 },
+      { transform: `translate(${drift}px, -80vh) rotate(${drift}deg) scale(0.8)`, opacity: 0.7, offset: 0.75 },
+      { transform: `translate(${drift*1.3}px, -115vh) rotate(${drift*1.5}deg) scale(0.4)`, opacity: 0 }
+    ], { duration: dur, easing: 'ease-out', fill: 'forwards' }).onfinish = () => el.remove();
+  }
+
+  spawnFlower(); spawnFlower(); // seed with 2 immediately
+  container._interval = setInterval(() => {
+    if (!document.getElementById('effect-digital_detox')) { clearInterval(container._interval); return; }
+    spawnFlower();
+    if (Math.random() > 0.4) setTimeout(spawnFlower, 400);
+  }, 900);
+}
+
+function startLaserEffect() {
+  stopBuffEffect('focus_stream');
+  const container = document.createElement('div');
+  container.id = 'effect-focus_stream';
+  container.className = 'buff-effect-layer blend-screen';
+  document.body.appendChild(container);
+
+  function spawnLaser() {
+    if (!document.getElementById('effect-focus_stream')) return;
+    const laser = document.createElement('div');
+    const y = 60 + Math.random() * (window.innerHeight - 120);
+    const thick = 2 + Math.random() * 3;
+    laser.style.cssText = `
+      position:absolute;
+      top:${y}px;
+      left:-120vw;
+      width:120vw;
+      height:${thick}px;
+      background:linear-gradient(90deg,transparent 0%,#38bdf833 15%,#38bdf8 40%,#ffffff 50%,#38bdf8 60%,#38bdf833 85%,transparent 100%);
+      box-shadow:0 0 8px 2px #38bdf8aa,0 0 24px 4px #38bdf844;
+      border-radius:2px;
+    `;
+    container.appendChild(laser);
+    const spd = 900 + Math.random() * 600;
+    laser.animate([
+      { transform: 'translateX(0)' },
+      { transform: 'translateX(240vw)' }
+    ], { duration: spd, easing: 'ease-in', fill: 'forwards' }).onfinish = () => laser.remove();
+  }
+
+  spawnLaser();
+  container._interval = setInterval(() => {
+    if (!document.getElementById('effect-focus_stream')) { clearInterval(container._interval); return; }
+    spawnLaser();
+    // Occasional double burst
+    if (Math.random() > 0.65) setTimeout(spawnLaser, 120);
+  }, 2500 + Math.random() * 1500);
+}
+
+function startGratitudeEffect() {
+  stopBuffEffect('gratitude_audit');
+  const container = document.createElement('div');
+  container.id = 'effect-gratitude_audit';
+  container.className = 'buff-effect-layer blend-screen';
+  document.body.appendChild(container);
+
+  function spawnOrb() {
+    if (!document.getElementById('effect-gratitude_audit')) return;
+    const orb = document.createElement('div');
+    const size = 40 + Math.random() * 80;
+    orb.style.cssText = `
+      position:absolute;
+      width:${size}px;height:${size}px;
+      border-radius:50%;
+      left:${Math.random()*100}vw;top:${Math.random()*100}vh;
+      background:radial-gradient(circle,#a78bfa88,transparent 70%);
+      filter:blur(8px);
+    `;
+    container.appendChild(orb);
+    orb.animate([
+      { opacity:0, transform:'scale(0.2)' },
+      { opacity:1, transform:'scale(1)', offset:0.3 },
+      { opacity:0, transform:'scale(1.8)' }
+    ], { duration: 3000 + Math.random()*2000, easing:'ease-out', fill:'forwards' }).onfinish = () => orb.remove();
+  }
+
+  container._interval = setInterval(() => {
+    if (!document.getElementById('effect-gratitude_audit')) { clearInterval(container._interval); return; }
+    spawnOrb();
+  }, 600);
+}
+
+function startStakeholderEffect() {
+  stopBuffEffect('stakeholder_bonus');
+  const container = document.createElement('div');
+  container.id = 'effect-stakeholder_bonus';
+  container.className = 'buff-effect-layer';
+  document.body.appendChild(container);
+
+  const PARTICLES = ['✨','⭐','🌟','💫','🥂'];
+
+  function spawnParticle() {
+    if (!document.getElementById('effect-stakeholder_bonus')) return;
+    const el = document.createElement('div');
+    const x = Math.random() * 100, y = Math.random() * 100;
+    el.style.cssText = `position:absolute;left:${x}vw;top:${y}vh;font-size:${0.8+Math.random()*1.2}rem;pointer-events:none;`;
+    el.textContent = PARTICLES[Math.floor(Math.random()*PARTICLES.length)];
+    container.appendChild(el);
+    el.animate([
+      { opacity:0, transform:'scale(0) rotate(0deg)' },
+      { opacity:1, transform:'scale(1.2) rotate(180deg)', offset:0.4 },
+      { opacity:0, transform:'scale(0.6) rotate(360deg)' }
+    ], { duration:2500+Math.random()*1500, easing:'ease-in-out', fill:'forwards' }).onfinish = () => el.remove();
+  }
+
+  container._interval = setInterval(() => {
+    if (!document.getElementById('effect-stakeholder_bonus')) { clearInterval(container._interval); return; }
+    spawnParticle();
+    if (Math.random()>0.5) setTimeout(spawnParticle, 200);
+  }, 700);
+}
 // ─── STORE ────────────────────────────────────────────────────────────────────
 function renderStorePage() {
   updateVDisplay();
@@ -1360,7 +1604,7 @@ function renderStorePage() {
     invKeys.forEach(itemId=>{
       const item=BASE_STORE_ITEMS.find(i=>i.id===itemId); if (!item) return;
       const qty=inv[itemId];
-      const isBuffed=S.activeBuffs&&S.activeBuffs[itemId]===todayStr();
+      const isBuffed = S.activeBuffs && S.activeBuffs[itemId] && S.activeBuffs[itemId].expires > Date.now();
       const row=document.createElement('div'); row.className='inv-row';
       row.innerHTML=`<span class="inv-emoji">${item.emoji}</span>
         <span class="inv-name">${item.name}</span>
@@ -1463,15 +1707,18 @@ async function useInventoryItem(itemId) {
   if (!S.inventory||!S.inventory[itemId]||S.inventory[itemId]<1) { showToast('⚠ Item not in inventory.',2000,true); return; }
   S.inventory[itemId]--;
   if (S.inventory[itemId]<=0) delete S.inventory[itemId];
-  // Activate buff for today
-  if (!S.activeBuffs) S.activeBuffs={};
-  if (item.buffLabel) S.activeBuffs[itemId]=todayStr();
-  // CSS buff class — only one active at a time
+// Activate buff with real timestamp
+  if (!S.activeBuffs) S.activeBuffs = {};
+  const durationMs = (item.duration || 60) * 60000;
+  if (item.buffLabel) S.activeBuffs[itemId] = { expires: Date.now() + durationMs };
+  // CSS buff class — strip others, apply this one
   if (item.buffClass) {
-    BASE_STORE_ITEMS.filter(i=>i.buffClass).forEach(i=>document.body.classList.remove(i.buffClass));
+    BASE_STORE_ITEMS.filter(i => i.buffClass).forEach(i => document.body.classList.remove(i.buffClass));
     document.body.classList.add(item.buffClass);
-    setTimeout(()=>document.body.classList.remove(item.buffClass),3600000);
+    setTimeout(() => document.body.classList.remove(item.buffClass), durationMs);
   }
+  // Start the JS visual effect
+  startBuffEffect(itemId);
   await saveUserSettings();
   showToast(`⚡ ${item.buffLabel||item.name.toUpperCase()+' DEPLOYED'}`,3500);
   renderBuffBar();
