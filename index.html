@@ -1911,7 +1911,7 @@ function closeReviewModal(id) { document.getElementById(id).classList.add('hidde
 // ─── DEBUG BACKDOOR ───────────────────────────────────────────────────────────
 function debugAddV(amount) {
   if (!currentUser) { console.warn('Not authenticated.'); return; }
-  if (currentUser.email === 'Aidanb9903@gmail.com') {
+  if (currentUser.email === 'aidanb9903@gmail.com') {
     console.log('%c Developer mode active. ', 'background:#dfff00;color:#000;font-weight:bold;padding:2px 8px');
     S.vBalance = (S.vBalance || 0) + amount;
     S.lifetimeEarned = (S.lifetimeEarned || 0) + amount;
