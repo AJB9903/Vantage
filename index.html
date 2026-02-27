@@ -40,15 +40,15 @@ body.buff-unfiltered {
 .buff-effect-layer.blend-screen { mix-blend-mode: screen; }
 
 /* ═══ PERMANENT THEMES ═══════════════════════════════════════════════ */
-body.theme-highvis {
-  --accent:#38bdf8;--bg:#ffffff;--text:#000000;
-  --surface:#f0f9ff;--surface2:#e0f2fe;
-  --border:#bae6fd;--muted:#475569;--muted2:#cbd5e1;
+body.theme-ember {
+  --accent:#f97316;--bg:#0c0a09;--text:#fafaf9;
+  --surface:#1c1917;--surface2:#292524;
+  --border:#44403c;--muted:#a8a29e;--muted2:#292524;
 }
-body.theme-sovereign {
-  --accent:#fbbf24;--bg:#1e1b4b;--text:#ffffff;
-  --surface:#312e81;--surface2:#3730a3;
-  --border:#4338ca;--muted:#a5b4fc;--muted2:#312e81;
+body.theme-crimson {
+  --accent:#e11d48;--bg:#080810;--text:#ffffff;
+  --surface:#13111c;--surface2:#1e1b2e;
+  --border:#2d2b3d;--muted:#8b8a9b;--muted2:#1e1b2e;
 }
 body.theme-system {
   --accent:#f87171;--bg:#0f172a;--text:#ffffff;
@@ -56,9 +56,9 @@ body.theme-system {
   --border:#334155;--muted:#94a3b8;--muted2:#1e293b;
 }
 /* Buff glows still render on top of all themes */
-body.theme-highvis.buff-fuel   { box-shadow: inset 0 0 30px #dfff00; }
-body.theme-sovereign.buff-fuel { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #fbbf2444; }
-body.theme-system.buff-fuel    { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #f8717144; }
+body.theme-ember.buff-fuel   { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #f9731644; }
+body.theme-crimson.buff-fuel { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #e11d4844; }
+body.theme-system.buff-fuel  { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #f8717144; }
 
 /* AUTH */
 #auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px}
@@ -456,6 +456,20 @@ body.theme-system.buff-fuel    { box-shadow: inset 0 0 30px #dfff00, inset 0 0 6
         <div id="weekly-goals-list"></div>
         <div style="font-size:0.75rem;color:var(--muted);padding:8px 0;display:none" id="no-weekly-goals">No weekly goals set. Add them in Settings → Goals.</div>
       </div>
+      <!-- WEEKLY NON-NEGOTIABLES CARD -->
+      <div class="card section-gap" id="wnn-card" style="display:none;border-color:#4a0000;background:#0d0000">
+        <div class="goals-header">
+          <div class="card-label" style="color:var(--red)">
+            Weekly Non-Negotiables — <span id="wnn-count">0/0</span>
+          </div>
+          <span style="font-size:0.65rem;color:var(--muted);font-family:'Space Mono',monospace" id="wnn-week-label"></span>
+        </div>
+        <div style="font-size:0.65rem;font-family:'Space Mono',monospace;color:#f87171;margin-bottom:10px;padding:6px 10px;background:#1a0000;border-radius:6px;border:1px solid #3a0000">
+          Complete = +$V 500 each · Miss = -$V 1,500 each · Evaluated every Monday
+        </div>
+        <div class="habit-list" id="wnn-list"></div>
+      </div>
+
       <div class="card section-gap">
         <div class="card-label" style="margin-bottom:12px">Voice / Text Log</div>
         <button class="voice-btn" id="voice-btn" onclick="toggleVoice()">
@@ -592,6 +606,14 @@ body.theme-system.buff-fuel    { box-shadow: inset 0 0 30px #dfff00, inset 0 0 6
       <!-- THEME SELECTOR injected by renderThemeSelector() -->
       <div id="theme-settings-section"></div>
       <div class="settings-section">
+        <div class="settings-title">Weekly Non-Negotiables</div>
+        <p style="font-size:0.73rem;color:var(--muted);margin-bottom:12px;line-height:1.6">These tasks repeat every week. Same tasks, same stakes. <strong style="color:var(--red)">+$V 500 complete · -$V 1,500 missed.</strong> Evaluated Monday morning for the previous week.</p>
+        <div id="wnn-editor"></div>
+        <button class="add-btn" onclick="addWnnField()" style="margin-top:4px">+ Add non-negotiable</button>
+        <div style="margin-top:12px"><button class="save-btn" onclick="saveWnn()">Save Non-Negotiables</button></div>
+      </div>
+
+      <div class="settings-section">
         <div class="settings-title">Groq API Key (free AI feedback)</div>
         <p style="font-size:0.73rem;color:var(--muted);margin-bottom:10px;line-height:1.6">Get a free key at <strong style="color:var(--text)">console.groq.com</strong> → API Keys → Create key.</p>
         <input type="password" class="inp" id="set-groq-key" placeholder="gsk_..."/>
@@ -688,6 +710,9 @@ let S = {
   lastWeeklyReview: null, lastMonthlyRecap: null,
   inventory: {}, activeBuffs: {},
   unlockedThemes: [], activeTheme: 'default',
+  weeklyNonNeg: [],
+  weeklyNonNegStatus: {},
+  weeklyNonNegBonusGiven: {},
 };
 let currentUser = null;
 let authMode = 'login';
@@ -753,26 +778,26 @@ function getStakePenalty(stake) {
 
 // ─── THEME SYSTEM ─────────────────────────────────────────────────────────────
 function applyTheme(themeId) {
-  ['theme-highvis','theme-sovereign','theme-system'].forEach(t => document.body.classList.remove(t));
+  ['theme-ember','theme-crimson','theme-system'].forEach(t => document.body.classList.remove(t));
   if (themeId && themeId !== 'default') document.body.classList.add('theme-' + themeId);
   S.activeTheme = themeId || 'default';
 }
 
 function unlockThemesForMultiplierCount(count) {
   if (!S.unlockedThemes) S.unlockedThemes = [];
-  if (count >= 1 && !S.unlockedThemes.includes('highvis'))   S.unlockedThemes.push('highvis');
-  if (count >= 2 && !S.unlockedThemes.includes('sovereign')) S.unlockedThemes.push('sovereign');
-  if (count >= 3 && !S.unlockedThemes.includes('system'))    S.unlockedThemes.push('system');
+  if (count >= 1 && !S.unlockedThemes.includes('ember'))   S.unlockedThemes.push('ember');
+  if (count >= 2 && !S.unlockedThemes.includes('crimson')) S.unlockedThemes.push('crimson');
+  if (count >= 3 && !S.unlockedThemes.includes('system'))  S.unlockedThemes.push('system');
 }
 
 function renderThemeSelector() {
   const section = document.getElementById('theme-settings-section');
   if (!section) return;
-  const themes = [
-    { id: 'default',   name: 'Default',    desc: 'Acid yellow on black. The original.',  locked: false },
-    { id: 'highvis',   name: 'High-Vis',   desc: 'White/blue. Unlock: 1× Multiplier.',   locked: !(S.unlockedThemes||[]).includes('highvis') },
-    { id: 'sovereign', name: 'Sovereign',  desc: 'Gold/purple. Unlock: 2× Multipliers.', locked: !(S.unlockedThemes||[]).includes('sovereign') },
-    { id: 'system',    name: 'System',     desc: 'Red/slate. Unlock: 3× Multipliers.',   locked: !(S.unlockedThemes||[]).includes('system') },
+const themes = [
+    { id: 'default',  name: 'Default',  desc: 'Acid yellow on black. The original.',         locked: false },
+    { id: 'ember',    name: 'Ember',    desc: 'Warm orange on charcoal. Unlock: 1× Mult.',   locked: !(S.unlockedThemes||[]).includes('ember') },
+    { id: 'crimson',  name: 'Crimson',  desc: 'Rose-red on deep dark. Unlock: 2× Mult.',     locked: !(S.unlockedThemes||[]).includes('crimson') },
+    { id: 'system',   name: 'System',   desc: 'Red/slate. Unlock: 3× Multipliers.',          locked: !(S.unlockedThemes||[]).includes('system') },
   ];
   const active = S.activeTheme || 'default';
   let html = '<div class="settings-section"><div class="settings-title">UI Theme</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">';
@@ -888,6 +913,7 @@ async function checkNewDay() {
   if (lastDate && lastDate < today) {
     await applyEodPenalties(lastDate);
     await checkLiquidation();
+    await checkWeeklyNonNegPenalties();
     await saveUserSettings();
   }
   localStorage.setItem('vantage_lastActiveDate', today);
@@ -1012,8 +1038,11 @@ async function loadUserSettings() {
       S.purchases         = meta.purchases         || [];
       S.goalBonusGiven    = meta.goalBonusGiven    || {};
       S.inventory         = meta.inventory         || {};
-      S.unlockedThemes    = meta.unlockedThemes    || [];
-      S.activeTheme       = meta.activeTheme       || 'default';
+      S.unlockedThemes         = meta.unlockedThemes         || [];
+      S.activeTheme            = meta.activeTheme            || 'default';
+      S.weeklyNonNeg           = meta.weeklyNonNeg           || [];
+      S.weeklyNonNegStatus     = meta.weeklyNonNegStatus     || {};
+      S.weeklyNonNegBonusGiven = meta.weeklyNonNegBonusGiven || {};
       const savedStakes = meta.habitStakes || {};
       S.habitStakes = Object.keys(savedStakes).length > 0 ? savedStakes : {...DEFAULT_HABIT_STAKES};
       // Purge expired buffs
@@ -1038,6 +1067,9 @@ async function saveUserSettings() {
     goalBonusGiven: S.goalBonusGiven||{}, habitStakes: S.habitStakes||{},
     inventory: S.inventory||{}, activeBuffs: S.activeBuffs||{},
     unlockedThemes: S.unlockedThemes||[], activeTheme: S.activeTheme||'default',
+    weeklyNonNeg: S.weeklyNonNeg||[],
+    weeklyNonNegStatus: S.weeklyNonNegStatus||{},
+    weeklyNonNegBonusGiven: S.weeklyNonNegBonusGiven||{},
   };
   await sb.from('user_settings').upsert({
     user_id: currentUser.id, habits: S.habits,
@@ -1094,6 +1126,7 @@ function initToday(dk) {
   document.getElementById('today-date-label').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   renderHabitList(dk);
   renderWeeklyGoals();
+  renderWeeklyNonNeg();
   updateVDisplay();
   renderBuffBar();
   generateBriefing();
@@ -1360,6 +1393,153 @@ function renderBuffBar() {
   tick();
   _buffTickInterval = setInterval(tick, 1000);
 }
+
+// ─── WEEKLY NON-NEGOTIABLES ───────────────────────────────────────────────────
+function getWeekSunday(date = new Date()) {
+  const d = new Date(date);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - d.getDay());
+  return d.toISOString().split('T')[0];
+}
+
+function renderWeeklyNonNeg() {
+  const card = document.getElementById('wnn-card');
+  const list = document.getElementById('wnn-list');
+  if (!card || !list) return;
+
+  if (!S.weeklyNonNeg || !S.weeklyNonNeg.length) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+
+  const weekKey = getWeekSunday();
+  const status = (S.weeklyNonNegStatus && S.weeklyNonNegStatus[weekKey]) || {};
+  const done = S.weeklyNonNeg.filter(t => status[t]).length;
+
+  document.getElementById('wnn-count').textContent = `${done}/${S.weeklyNonNeg.length}`;
+
+  const now = new Date();
+  // Days remaining until end of Saturday (daysLeft = 0 on Sunday = reset day)
+  const daysLeft = 6 - now.getDay(); // Sun=0 so Sun gives 6, Sat gives 0
+  document.getElementById('wnn-week-label').textContent =
+    now.getDay() === 0
+      ? 'Resets tonight at midnight'
+      : `${daysLeft} day${daysLeft !== 1 ? 's' : ''} left this week`;
+
+  list.innerHTML = '';
+  S.weeklyNonNeg.forEach(task => {
+    const checked = status[task] || false;
+    const el = document.createElement('div');
+    el.className = 'habit-item' + (checked ? ' done' : '');
+    el.onclick = () => toggleWeeklyNonNeg(task);
+    el.innerHTML = `
+      <div class="habit-left">
+        <div class="habit-cb">${checked ? '✓' : ''}</div>
+        <div class="habit-name">${task}</div>
+      </div>
+      <div class="habit-right">
+        <span class="stake-tag stake-crit" style="letter-spacing:0.5px">N/N</span>
+        <span style="font-size:0.62rem;font-family:'Space Mono',monospace;color:${checked ? 'var(--green)' : 'var(--muted)'}">
+          ${checked ? '+$V 500' : '-$V 1,500'}
+        </span>
+      </div>`;
+    list.appendChild(el);
+  });
+}
+
+async function toggleWeeklyNonNeg(task) {
+  const weekKey = getWeekSunday();
+  if (!S.weeklyNonNegStatus) S.weeklyNonNegStatus = {};
+  if (!S.weeklyNonNegStatus[weekKey]) S.weeklyNonNegStatus[weekKey] = {};
+  const prev = S.weeklyNonNegStatus[weekKey][task] || false;
+  S.weeklyNonNegStatus[weekKey][task] = !prev;
+  await saveUserSettings();
+  renderWeeklyNonNeg();
+}
+
+async function checkWeeklyNonNegPenalties() {
+  // Only run on Monday
+  if (new Date().getDay() !== 1) return;
+  if (!S.weeklyNonNeg || !S.weeklyNonNeg.length) return;
+
+  // Last week's Sunday key (yesterday from Monday's perspective)
+  const lastSunday = new Date();
+  lastSunday.setDate(lastSunday.getDate() - 1);
+  lastSunday.setHours(0,0,0,0);
+  const weekKey = lastSunday.toISOString().split('T')[0];
+
+  const checkKey = `wnn_evaluated_${weekKey}`;
+  if (localStorage.getItem(checkKey)) return;
+
+  const status = (S.weeklyNonNegStatus && S.weeklyNonNegStatus[weekKey]) || {};
+  if (!S.weeklyNonNegBonusGiven) S.weeklyNonNegBonusGiven = {};
+
+  let totalBonus = 0, totalPenalty = 0, completed = [], missed = [];
+
+  S.weeklyNonNeg.forEach(task => {
+    if (status[task]) { totalBonus += 500; completed.push(task); }
+    else { totalPenalty += 1500; missed.push(task); }
+  });
+
+  if (totalBonus > 0 && !S.weeklyNonNegBonusGiven[weekKey]) {
+    addVBalance(totalBonus);
+    S.weeklyNonNegBonusGiven[weekKey] = true;
+    setTimeout(() => showToast(`✓ WEEKLY N/N COMPLETE: +$V ${totalBonus.toLocaleString()} (${completed.length} tasks)`, 5000), 1500);
+  }
+
+  if (totalPenalty > 0 && S.contractSigned) {
+    deductVBalance(totalPenalty);
+    setTimeout(() => showToast(`⚠ WEEKLY N/N BREACH: -$V ${totalPenalty.toLocaleString()} — ${missed.join(', ')}`, 6000, true), 2500);
+  }
+
+  // Trim old weeks — keep last 8
+  const allWeeks = Object.keys(S.weeklyNonNegStatus).sort();
+  if (allWeeks.length > 8) {
+    allWeeks.slice(0, allWeeks.length - 8).forEach(k => delete S.weeklyNonNegStatus[k]);
+  }
+
+  localStorage.setItem(checkKey, 'true');
+}
+
+function renderWnnSettings() {
+  const ed = document.getElementById('wnn-editor');
+  if (!ed) return;
+  ed.innerHTML = '';
+  if (!S.weeklyNonNeg || !S.weeklyNonNeg.length) {
+    ed.innerHTML = '<div style="font-size:0.75rem;color:var(--muted);padding:8px 0">No non-negotiables set yet.</div>';
+    return;
+  }
+  S.weeklyNonNeg.forEach((task, i) => {
+    const row = document.createElement('div');
+    row.className = 'habit-edit-item';
+    row.innerHTML = `
+      <input type="text" class="inp" value="${task.replace(/"/g,'&quot;')}" id="wnn-${i}" style="flex:1;min-width:0"/>
+      <button class="del-btn" onclick="removeWnn(${i})">✕</button>`;
+    ed.appendChild(row);
+  });
+}
+
+function removeWnn(i) { S.weeklyNonNeg.splice(i,1); renderWnnSettings(); }
+
+async function saveWnn() {
+  const inputs = document.querySelectorAll('[id^="wnn-"]');
+  S.weeklyNonNeg = Array.from(inputs).map(el => el.value.trim()).filter(Boolean);
+  await saveUserSettings();
+  showToast('Weekly non-negotiables saved ✓');
+  renderWnnSettings();
+  renderWeeklyNonNeg();
+}
+
+function addWnnField() {
+  if (!S.weeklyNonNeg) S.weeklyNonNeg = [];
+  S.weeklyNonNeg.push('');
+  renderWnnSettings();
+  setTimeout(() => {
+    const inputs = document.querySelectorAll('[id^="wnn-"]');
+    if (inputs.length) inputs[inputs.length-1].focus();
+  }, 50);
+}  
 // ─── BUFF VISUAL EFFECTS ──────────────────────────────────────────────────────
 function startBuffEffect(itemId) {
   const fns = {
@@ -1387,58 +1567,74 @@ function startLightningEffect() {
   container.className = 'buff-effect-layer blend-screen';
   document.body.appendChild(container);
 
-  function makeBolt() {
+  function makeBorderBolt() {
+    if (!document.getElementById('effect-fuel_upgrade')) return;
+    const W = window.innerWidth, H = window.innerHeight;
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-    const x = Math.random() * window.innerWidth;
-    const h = window.innerHeight;
-    svg.style.cssText = `position:absolute;left:${x}px;top:0;width:80px;height:${h}px;overflow:visible;opacity:0;transition:opacity 0.05s`;
-    svg.setAttribute('viewBox', `0 0 80 ${h}`);
+    svg.style.cssText = `position:absolute;inset:0;width:100%;height:100%;overflow:visible;opacity:0;`;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
 
-    // Jagged lightning path
-    const pts = [];
-    let cx = 40, cy = 0; pts.push([cx, cy]);
-    const segs = 14;
-    for (let i = 1; i <= segs; i++) {
-      cx += (Math.random() - 0.5) * 50; cx = Math.max(2, Math.min(78, cx));
-      cy = (i / segs) * h; pts.push([cx, cy]);
-    }
-    const d = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    // Pick which edges fire this strike (1-3 edges)
+    const edges = ['top','bottom','left','right'];
+    const chosen = edges.filter(() => Math.random() > 0.45);
+    if (!chosen.length) chosen.push(edges[Math.floor(Math.random()*4)]);
 
-    const defs = document.createElementNS('http://www.w3.org/2000/svg','defs');
-    const filter = document.createElementNS('http://www.w3.org/2000/svg','filter');
-    filter.id = 'lglow_' + Math.random().toString(36).slice(2);
-    filter.innerHTML = `<feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>`;
-    defs.appendChild(filter);
+    const filterId = 'bf_' + Math.random().toString(36).slice(2);
+    let paths = `<defs>
+      <filter id="${filterId}" x="-20%" y="-20%" width="140%" height="140%">
+        <feGaussianBlur stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>`;
 
-    // Main bolt
-    const main = document.createElementNS('http://www.w3.org/2000/svg','path');
-    main.setAttribute('d', d); main.setAttribute('fill','none');
-    main.setAttribute('stroke','#dfff00'); main.setAttribute('stroke-width','2.5');
-    main.setAttribute('filter',`url(#${filter.id})`);
-    // White core
-    const core = document.createElementNS('http://www.w3.org/2000/svg','path');
-    core.setAttribute('d', d); core.setAttribute('fill','none');
-    core.setAttribute('stroke','#ffffff'); core.setAttribute('stroke-width','1');
+    chosen.forEach(edge => {
+      const segs = 18;
+      const pts = [];
+      const jag = 16; // how far bolts deviate inward
 
-    svg.appendChild(defs); svg.appendChild(main); svg.appendChild(core);
+      if (edge === 'top') {
+        pts.push([0, 0]);
+        for (let i = 1; i < segs; i++) { pts.push([(i/segs)*W, (Math.random()-0.3)*jag]); }
+        pts.push([W, 0]);
+      } else if (edge === 'bottom') {
+        pts.push([0, H]);
+        for (let i = 1; i < segs; i++) { pts.push([(i/segs)*W, H - (Math.random()-0.3)*jag]); }
+        pts.push([W, H]);
+      } else if (edge === 'left') {
+        pts.push([0, 0]);
+        for (let i = 1; i < segs; i++) { pts.push([(Math.random()-0.3)*jag, (i/segs)*H]); }
+        pts.push([0, H]);
+      } else {
+        pts.push([W, 0]);
+        for (let i = 1; i < segs; i++) { pts.push([W - (Math.random()-0.3)*jag, (i/segs)*H]); }
+        pts.push([W, H]);
+      }
+
+      const d = pts.map((p,i) => (i===0?'M':'L') + p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+      paths += `
+        <path d="${d}" fill="none" stroke="#dfff00" stroke-width="2.5" filter="url(#${filterId})"/>
+        <path d="${d}" fill="none" stroke="#ffffff" stroke-width="1"/>
+      `;
+    });
+
+    svg.innerHTML = paths;
     container.appendChild(svg);
 
-    // Flash sequence: on → dim → on → off
+    // Flash sequence
     requestAnimationFrame(() => {
       svg.style.opacity = '1';
-      setTimeout(() => { svg.style.opacity = '0.3'; }, 60);
-      setTimeout(() => { svg.style.opacity = '1'; }, 100);
-      setTimeout(() => { svg.style.opacity = '0'; svg.style.transition='opacity 0.1s'; }, 150);
-      setTimeout(() => { svg.remove(); }, 280);
+      setTimeout(() => { svg.style.opacity = '0.35'; }, 55);
+      setTimeout(() => { svg.style.opacity = '0.9'; }, 95);
+      setTimeout(() => { svg.style.transition = 'opacity 0.12s'; svg.style.opacity = '0'; }, 145);
+      setTimeout(() => svg.remove(), 300);
     });
   }
 
   function scheduleBolt() {
     if (!document.getElementById('effect-fuel_upgrade')) return;
-    makeBolt();
-    // Occasional double-strike
-    if (Math.random() > 0.5) setTimeout(makeBolt, 60 + Math.random() * 80);
-    container._timeout = setTimeout(scheduleBolt, 800 + Math.random() * 2200);
+    makeBorderBolt();
+    if (Math.random() > 0.5) setTimeout(makeBorderBolt, 70 + Math.random() * 90);
+    container._timeout = setTimeout(scheduleBolt, 700 + Math.random() * 2000);
   }
   scheduleBolt();
 }
@@ -1486,69 +1682,59 @@ function startLaserEffect() {
   container.className = 'buff-effect-layer blend-screen';
   document.body.appendChild(container);
 
-  function spawnLaser() {
+  function spawnScan() {
     if (!document.getElementById('effect-focus_stream')) return;
-    const laser = document.createElement('div');
-    const y = 60 + Math.random() * (window.innerHeight - 120);
-    const thick = 2 + Math.random() * 3;
-    laser.style.cssText = `
+
+    // Horizontal bar sweeping top → bottom
+    const beam = document.createElement('div');
+    const beamH = 2 + Math.random();
+    beam.style.cssText = `
       position:absolute;
-      top:${y}px;
-      left:-120vw;
-      width:120vw;
-      height:${thick}px;
-      background:linear-gradient(90deg,transparent 0%,#38bdf833 15%,#38bdf8 40%,#ffffff 50%,#38bdf8 60%,#38bdf833 85%,transparent 100%);
-      box-shadow:0 0 8px 2px #38bdf8aa,0 0 24px 4px #38bdf844;
+      left:0; top:-60px;
+      width:100vw; height:${beamH}px;
+      background:linear-gradient(90deg,
+        transparent 0%,
+        #38bdf822 8%,
+        #38bdf8 35%,
+        #ffffff 50%,
+        #38bdf8 65%,
+        #38bdf822 92%,
+        transparent 100%);
+      box-shadow:0 0 10px 3px #38bdf8aa, 0 0 28px 6px #38bdf833;
       border-radius:2px;
     `;
-    container.appendChild(laser);
-    const spd = 900 + Math.random() * 600;
-    laser.animate([
-      { transform: 'translateX(0)' },
-      { transform: 'translateX(240vw)' }
-    ], { duration: spd, easing: 'ease-in', fill: 'forwards' }).onfinish = () => laser.remove();
+
+    // Trailing glow that follows below the beam
+    const trail = document.createElement('div');
+    trail.style.cssText = `
+      position:absolute;
+      left:0; top:-60px;
+      width:100vw; height:50px;
+      background:linear-gradient(180deg, #38bdf814 0%, transparent 100%);
+    `;
+
+    container.appendChild(trail);
+    container.appendChild(beam);
+
+    const dur = 3500 + Math.random() * 1500;
+    const dist = `calc(100vh + 80px)`;
+
+    beam.animate(
+      [{ transform:'translateY(0)' }, { transform:`translateY(${dist})` }],
+      { duration: dur, easing:'linear', fill:'forwards' }
+    );
+    trail.animate(
+      [{ transform:'translateY(0)' }, { transform:`translateY(${dist})` }],
+      { duration: dur, easing:'linear', fill:'forwards' }
+    ).onfinish = () => { beam.remove(); trail.remove(); };
   }
 
-  spawnLaser();
+  spawnScan();
   container._interval = setInterval(() => {
     if (!document.getElementById('effect-focus_stream')) { clearInterval(container._interval); return; }
-    spawnLaser();
-    // Occasional double burst
-    if (Math.random() > 0.65) setTimeout(spawnLaser, 120);
-  }, 2500 + Math.random() * 1500);
-}
-
-function startGratitudeEffect() {
-  stopBuffEffect('gratitude_audit');
-  const container = document.createElement('div');
-  container.id = 'effect-gratitude_audit';
-  container.className = 'buff-effect-layer blend-screen';
-  document.body.appendChild(container);
-
-  function spawnOrb() {
-    if (!document.getElementById('effect-gratitude_audit')) return;
-    const orb = document.createElement('div');
-    const size = 40 + Math.random() * 80;
-    orb.style.cssText = `
-      position:absolute;
-      width:${size}px;height:${size}px;
-      border-radius:50%;
-      left:${Math.random()*100}vw;top:${Math.random()*100}vh;
-      background:radial-gradient(circle,#a78bfa88,transparent 70%);
-      filter:blur(8px);
-    `;
-    container.appendChild(orb);
-    orb.animate([
-      { opacity:0, transform:'scale(0.2)' },
-      { opacity:1, transform:'scale(1)', offset:0.3 },
-      { opacity:0, transform:'scale(1.8)' }
-    ], { duration: 3000 + Math.random()*2000, easing:'ease-out', fill:'forwards' }).onfinish = () => orb.remove();
-  }
-
-  container._interval = setInterval(() => {
-    if (!document.getElementById('effect-gratitude_audit')) { clearInterval(container._interval); return; }
-    spawnOrb();
-  }, 600);
+    spawnScan();
+    if (Math.random() > 0.7) setTimeout(spawnScan, 180);
+  }, 4500 + Math.random() * 2000);
 }
 
 function startStakeholderEffect() {
@@ -1943,6 +2129,7 @@ function renderSettings() {
   document.getElementById('set-groq-key').value=S.groqKey||'';
   renderHabitsEditor();
   renderGoalsEditor();
+  renderWnnSettings();
   renderThemeSelector();
   renderEconomyStatus();
 }
