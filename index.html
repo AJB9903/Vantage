@@ -40,10 +40,10 @@ body.buff-unfiltered {
 .buff-effect-layer.blend-screen { mix-blend-mode: screen; }
 
 /* ═══ PERMANENT THEMES ═══════════════════════════════════════════════ */
-body.theme-ember {
-  --accent:#f97316;--bg:#0c0a09;--text:#fafaf9;
-  --surface:#1c1917;--surface2:#292524;
-  --border:#44403c;--muted:#a8a29e;--muted2:#292524;
+body.theme-navy {
+  --accent:#60a5fa;--accent2:#38bdf8;--bg:#0b1221;--text:#f1f5f9;
+  --surface:#151d2e;--surface2:#1a2540;
+  --border:#1e293b;--muted:#94a3b8;--muted2:#1a2540;
 }
 body.theme-crimson {
   --accent:#e11d48;--bg:#080810;--text:#ffffff;
@@ -51,14 +51,16 @@ body.theme-crimson {
   --border:#2d2b3d;--muted:#8b8a9b;--muted2:#1e1b2e;
 }
 body.theme-system {
-  --accent:#f87171;--bg:#0f172a;--text:#ffffff;
-  --surface:#1e293b;--surface2:#0f172a;
-  --border:#334155;--muted:#94a3b8;--muted2:#1e293b;
+  /* Warm Minimalist */
+  --accent:#2d2d2d;--accent2:#c4a484;--bg:#faf9f6;--text:#1a1a1a;
+  --surface:#ffffff;--surface2:#f5f3ef;
+  --border:#e8e4dd;--muted:#9a8f85;--muted2:#ede9e2;
+  --green:#4a7c5f;--red:#c0392b;--yellow:#b8860b;--pink:#a0522d;--blue:#2e6da4;
 }
 /* Buff glows still render on top of all themes */
-body.theme-ember.buff-fuel   { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #f9731644; }
+body.theme-navy.buff-fuel    { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #60a5fa44; }
 body.theme-crimson.buff-fuel { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #e11d4844; }
-body.theme-system.buff-fuel  { box-shadow: inset 0 0 30px #dfff00, inset 0 0 60px #f8717144; }
+body.theme-system.buff-fuel  { box-shadow: inset 0 0 30px #2d2d2d, inset 0 0 60px #c4a48444; }
 
 /* AUTH */
 #auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px}
@@ -767,10 +769,18 @@ function getInflationFactor() {
 function getInflatedPrice(basePrice) {
   return Math.round(basePrice * getInflationFactor());
 }
+function getThemeMultiplier() {
+  // Only active when that specific theme is the current active theme
+  const themeBonus = { navy: 1.2, crimson: 1.5, system: 2.0 };
+  return themeBonus[S.activeTheme] || 1.0;
+}
+
 function getStakeEarn(stake) {
   const base = STAKES[stake]?.earn || 40;
-  if (stake === 'critical') return Math.round(base * (1 + (S.multiplierCount || 0) * 0.10));
-  return base;
+  const themeMulti = getThemeMultiplier();
+  // Critical multiplier purchases (10% each) stack on top of critical habit base
+  const critBonus = (stake === 'critical') ? (1 + (S.multiplierCount || 0) * 0.10) : 1;
+  return Math.round(base * critBonus * themeMulti);
 }
 function getStakePenalty(stake) {
   return Math.round((STAKES[stake]?.penalty || 100) * getInflationFactor());
@@ -778,14 +788,14 @@ function getStakePenalty(stake) {
 
 // ─── THEME SYSTEM ─────────────────────────────────────────────────────────────
 function applyTheme(themeId) {
-  ['theme-ember','theme-crimson','theme-system'].forEach(t => document.body.classList.remove(t));
+  ['theme-navy','theme-crimson','theme-system'].forEach(t => document.body.classList.remove(t));
   if (themeId && themeId !== 'default') document.body.classList.add('theme-' + themeId);
   S.activeTheme = themeId || 'default';
 }
 
 function unlockThemesForMultiplierCount(count) {
   if (!S.unlockedThemes) S.unlockedThemes = [];
-  if (count >= 1 && !S.unlockedThemes.includes('ember'))   S.unlockedThemes.push('ember');
+  if (count >= 1 && !S.unlockedThemes.includes('navy'))   S.unlockedThemes.push('navy');
   if (count >= 2 && !S.unlockedThemes.includes('crimson')) S.unlockedThemes.push('crimson');
   if (count >= 3 && !S.unlockedThemes.includes('system'))  S.unlockedThemes.push('system');
 }
@@ -794,10 +804,10 @@ function renderThemeSelector() {
   const section = document.getElementById('theme-settings-section');
   if (!section) return;
 const themes = [
-    { id: 'default',  name: 'Default',  desc: 'Acid yellow on black. The original.',         locked: false },
-    { id: 'ember',    name: 'Ember',    desc: 'Warm orange on charcoal. Unlock: 1× Mult.',   locked: !(S.unlockedThemes||[]).includes('ember') },
-    { id: 'crimson',  name: 'Crimson',  desc: 'Rose-red on deep dark. Unlock: 2× Mult.',     locked: !(S.unlockedThemes||[]).includes('crimson') },
-    { id: 'system',   name: 'System',   desc: 'Red/slate. Unlock: 3× Multipliers.',          locked: !(S.unlockedThemes||[]).includes('system') },
+    { id: 'default', name: 'Default',      desc: 'Acid yellow on black. The original.',                          locked: false },
+    { id: 'navy',    name: 'Deep Command', desc: 'Midnight navy + sky blue. +1.2× all income. Unlock: 1× Mult.',locked: !(S.unlockedThemes||[]).includes('navy') },
+    { id: 'crimson', name: 'Crimson',      desc: 'Rose-red on deep dark. +1.5× all income. Unlock: 2× Mult.',   locked: !(S.unlockedThemes||[]).includes('crimson') },
+    { id: 'system',  name: 'Warm Minimal', desc: 'Bone white + terracotta. +2× all income. Unlock: 3× Mult.',   locked: !(S.unlockedThemes||[]).includes('system') },
   ];
   const active = S.activeTheme || 'default';
   let html = '<div class="settings-section"><div class="settings-title">UI Theme</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">';
@@ -990,8 +1000,7 @@ async function handleAuth() {
 async function handleLogout() {
   await sb.auth.signOut();
   currentUser=null; S.days={};
-  ['theme-highvis','theme-sovereign','theme-system'].forEach(t=>document.body.classList.remove(t));
-  document.getElementById('app').classList.remove('visible');
+  ['theme-navy','theme-crimson','theme-system'].forEach(t=>document.body.classList.remove(t));  document.getElementById('app').classList.remove('visible');
   document.getElementById('auth-screen').style.display='flex';
   document.getElementById('auth-email').value='';
   document.getElementById('auth-password').value='';
@@ -1048,8 +1057,13 @@ async function loadUserSettings() {
       // Purge expired buffs
       const today = todayStr();
       const rawBuffs = meta.activeBuffs || {};
-      S.activeBuffs = {};
-      Object.entries(rawBuffs).forEach(([id, exp]) => { if (exp===today) S.activeBuffs[id]=exp; });
+S.activeBuffs = {};
+const nowMs = Date.now();
+Object.entries(rawBuffs).forEach(([id, val]) => {
+  if (val && typeof val === 'object' && val.expires && val.expires > nowMs) {
+    S.activeBuffs[id] = val;
+  }
+});
       // Bloat truncation
       const hasSlotPurchase = (S.purchases||[]).some(p => p.item && p.item.includes('Habit Slot'));
       if (S.habits.length > 5 && !hasSlotPurchase) { S.habits=[...DEFAULT_HABITS]; S.habitStakes={...DEFAULT_HABIT_STAKES}; }
@@ -1272,9 +1286,11 @@ async function persistGoalProgress(id,val) {
   if (g) {
     const prev=g.progress||0; g.progress=parseInt(val);
     if (parseInt(val)===10&&prev<10&&!S.goalBonusGiven[id]) {
-      S.goalBonusGiven[id]=true; addVBalance(500);
+      S.goalBonusGiven[id]=true;
+      const goalBonus = Math.round(500 * getThemeMultiplier());
+      addVBalance(goalBonus);
       await saveUserSettings();
-      showToast(`🎯 GOAL COMPLETE: +$V 500 — ${g.name}`,3500);
+      showToast(`🎯 GOAL COMPLETE: +$V ${goalBonus} — ${g.name}`,3500);
     } else { await saveUserSettings(); }
   }
 }
@@ -1736,7 +1752,39 @@ function startLaserEffect() {
     if (Math.random() > 0.7) setTimeout(spawnScan, 180);
   }, 4500 + Math.random() * 2000);
 }
+  
+function startGratitudeEffect() {
+  stopBuffEffect('gratitude_audit');
+  const container = document.createElement('div');
+  container.id = 'effect-gratitude_audit';
+  container.className = 'buff-effect-layer blend-screen';
+  document.body.appendChild(container);
 
+  function spawnOrb() {
+    if (!document.getElementById('effect-gratitude_audit')) return;
+    const orb = document.createElement('div');
+    const size = 40 + Math.random() * 80;
+    orb.style.cssText = `
+      position:absolute;
+      width:${size}px;height:${size}px;
+      border-radius:50%;
+      left:${Math.random()*100}vw;top:${Math.random()*100}vh;
+      background:radial-gradient(circle,#a78bfa88,transparent 70%);
+      filter:blur(8px);
+    `;
+    container.appendChild(orb);
+    orb.animate([
+      { opacity:0, transform:'scale(0.2)' },
+      { opacity:1, transform:'scale(1)', offset:0.3 },
+      { opacity:0, transform:'scale(1.8)' }
+    ], { duration: 3000 + Math.random()*2000, easing:'ease-out', fill:'forwards' }).onfinish = () => orb.remove();
+  }
+
+  container._interval = setInterval(() => {
+    if (!document.getElementById('effect-gratitude_audit')) { clearInterval(container._interval); return; }
+    spawnOrb();
+  }, 600);
+}
 function startStakeholderEffect() {
   stopBuffEffect('stakeholder_bonus');
   const container = document.createElement('div');
