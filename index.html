@@ -399,8 +399,16 @@ body.theme-system.buff-fuel  { box-shadow: inset 0 0 30px #2d2d2d, inset 0 0 60p
       <div class="user-badge"><div class="user-email" id="sidebar-email"></div></div>
       <div class="month-badge"><strong id="sidebar-month"></strong><span id="sidebar-day"></span></div>
       <div style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent);text-align:center;margin-top:8px;padding:6px;background:rgba(223,255,0,0.04);border:1px solid rgba(223,255,0,0.15);border-radius:6px" id="sidebar-balance">$V 0</div>
-      <button class="logout-btn" onclick="handleLogout()">Sign out</button>
-    </div>
+<button class="logout-btn" onclick="handleLogout()">Sign out</button>
+      <div id="admin-panel" style="display:none;margin-top:10px;border-top:1px solid #2a0000;padding-top:10px">
+        <div style="font-size:0.58rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">⚠ Admin Controls</div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <input type="number" id="admin-v-amount" placeholder="$V amount" class="inp" style="font-size:0.75rem;padding:7px 10px"/>
+          <button onclick="adminAddV()" style="background:#1a0000;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:7px 10px;font-family:'Space Mono',monospace;font-size:0.65rem;cursor:pointer;white-space:nowrap">+ ADD</button>
+        </div>
+        <button onclick="adminTriggerWeekly()" style="width:100%;background:#0a0800;border:1px solid var(--yellow);color:var(--yellow);border-radius:6px;padding:7px;font-family:'Space Mono',monospace;font-size:0.65rem;cursor:pointer;margin-bottom:5px">▶ Force Weekly Review</button>
+        <button onclick="adminTriggerMonthly()" style="width:100%;background:#0a0800;border:1px solid #f472b6;color:#f472b6;border-radius:6px;padding:7px;font-family:'Space Mono',monospace;font-size:0.65rem;cursor:pointer">▶ Force Monthly Recap</button>
+      </div>    </div>
   </aside>
 
   <main class="main">
@@ -1022,6 +1030,7 @@ async function initApp() {
   setupEodTimer();
   checkTemporalReviews();
   applyTheme(S.activeTheme || 'default');
+  initAdminPanel();
 }
 
 // ─── SUPABASE DATA ────────────────────────────────────────────────────────────
@@ -2405,7 +2414,33 @@ function debugAddV(amount) {
     console.warn('Unauthorized.');
   }
 }
-
+// ─── ADMIN PANEL ──────────────────────────────────────────────────────────────
+function initAdminPanel() {
+  if (currentUser?.email === 'aidanb9903@gmail.com') {
+    document.getElementById('admin-panel').style.display = 'block';
+  }
+}
+function adminAddV() {
+  const amt = parseInt(document.getElementById('admin-v-amount').value);
+  if (!amt || isNaN(amt)) return showToast('Enter a valid $V amount', 2000, true);
+  S.vBalance += amt;
+  S.lifetimeEarned += amt > 0 ? amt : 0;
+  updateVDisplay();
+  saveUserSettings();
+  showToast(`⚡ Admin: ${amt > 0 ? '+' : ''}$V ${amt.toLocaleString()} injected`);
+}
+function adminTriggerWeekly() {
+  // Temporarily clear lastWeeklyReview so it fires
+  S.lastWeeklyReview = null;
+  showWeeklyReview();
+}
+function adminTriggerMonthly() {
+  // Fire for current month
+  const now = new Date();
+  const monthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2,'0');
+  S.lastMonthlyRecap = null;
+  showMonthlyRecap(monthKey);
+}
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
 (async () => {
   const {data:{session}} = await sb.auth.getSession();
