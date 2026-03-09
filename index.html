@@ -1300,8 +1300,50 @@ async function persistGoalProgress(id,val) {
       addVBalance(goalBonus);
       await saveUserSettings();
       showToast(`🎯 GOAL COMPLETE: +$V ${goalBonus} — ${g.name}`,3500);
+      fireConfetti();
     } else { await saveUserSettings(); }
   }
+}
+
+function fireConfetti() {
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:99999;';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const COLORS = ['#dfff00','#47ffd4','#f472b6','#38bdf8','#4ade80','#fbbf24','#ffffff'];
+  const pieces = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: -10 - Math.random() * 200,
+    w: 6 + Math.random() * 8,
+    h: 3 + Math.random() * 5,
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
+    rot: Math.random() * Math.PI * 2,
+    vx: (Math.random() - 0.5) * 4,
+    vy: 2 + Math.random() * 4,
+    vr: (Math.random() - 0.5) * 0.2,
+    opacity: 1
+  }));
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.vy += 0.08;
+      if (frame > 80) p.opacity = Math.max(0, p.opacity - 0.018);
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+      ctx.restore();
+    });
+    frame++;
+    if (frame < 140) requestAnimationFrame(draw);
+    else canvas.remove();
+  }
+  draw();
 }
 
 // ─── VOICE ────────────────────────────────────────────────────────────────────
@@ -1548,7 +1590,7 @@ function renderWnnSettings() {
 function removeWnn(i) { S.weeklyNonNeg.splice(i,1); renderWnnSettings(); }
 
 async function saveWnn() {
-  const inputs = document.querySelectorAll('[id^="wnn-"]');
+  const inputs = document.querySelectorAll('#wnn-editor input[id^="wnn-"]');
   S.weeklyNonNeg = Array.from(inputs).map(el => el.value.trim()).filter(Boolean);
   await saveUserSettings();
   showToast('Weekly non-negotiables saved ✓');
@@ -2266,8 +2308,40 @@ async function saveGoals() {
   const dateInputs=document.querySelectorAll('[id^="gdate-"]');
   nameInputs.forEach((el,i)=>{if(S.goals[i]){S.goals[i].name=el.value.trim();S.goals[i].deadline=dateInputs[i]?.value||'';}});
   S.goals=S.goals.filter(g=>g.name);
-  await saveUserSettings(); showToast('Goals saved ✓');
+  await saveUserSettings();
   renderGoalsEditor(); renderWeeklyGoals(); initToday(todayStr());
+  showGoalsSavedPopup();
+}
+
+function showGoalsSavedPopup() {
+  const existing = document.getElementById('goals-saved-popup');
+  if (existing) existing.remove();
+  const popup = document.createElement('div');
+  popup.id = 'goals-saved-popup';
+  popup.style.cssText = `
+    position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.8);
+    background:var(--surface);border:2px solid var(--accent);border-radius:16px;
+    padding:32px 40px;z-index:9999;text-align:center;
+    box-shadow:0 0 60px rgba(223,255,0,0.15);
+    opacity:0;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    min-width:260px;
+  `;
+  popup.innerHTML = `
+    <div style="font-size:2rem;margin-bottom:10px">🎯</div>
+    <div style="font-family:'Space Mono',monospace;font-size:0.62rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:8px">Goals Locked In</div>
+    <div style="font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:6px">${S.goals.length} objective${S.goals.length!==1?'s':''} committed</div>
+    <div style="font-size:0.72rem;color:var(--muted);font-family:'Space Mono',monospace">Saved to Supabase ✓</div>
+  `;
+  document.body.appendChild(popup);
+  requestAnimationFrame(() => {
+    popup.style.opacity = '1';
+    popup.style.transform = 'translate(-50%,-50%) scale(1)';
+  });
+  setTimeout(() => {
+    popup.style.opacity = '0';
+    popup.style.transform = 'translate(-50%,-50%) scale(0.85)';
+    setTimeout(() => popup.remove(), 250);
+  }, 1800);
 }
 async function saveGroqKey() { S.groqKey=document.getElementById('set-groq-key').value.trim(); localStorage.setItem('groq_key',S.groqKey); showToast('API key saved ✓'); }
 async function saveMonthSettings() {
@@ -2321,48 +2395,153 @@ function checkTemporalReviews() {
 }
 
 async function showWeeklyReview() {
-  const modal=document.getElementById('weekly-review-modal');
-  const body=document.getElementById('weekly-review-body');
+  const modal = document.getElementById('weekly-review-modal');
+  const body  = document.getElementById('weekly-review-body');
   modal.classList.remove('hidden');
-  const days=[];
-  for (let i=6;i>=0;i--) {
-    const d=new Date(); d.setDate(d.getDate()-i);
-    const dk=d.toISOString().split('T')[0];
-    const dayData=S.days[dk]||{habits:{},mood:null,weight:null,sleep:null};
-    const done=S.habits.filter(h=>dayData.habits[h]).length;
-    const total=S.habits.length;
-    days.push({dk,date:d,done,total,pct:total>0?done/total:0,sleep:dayData.sleep,weight:dayData.weight,mood:dayData.mood});
+  body.innerHTML = '<div style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:0.75rem;padding:20px 0">Loading 7-day data...</div>';
+
+  // ── Fresh fetch for last 7 days (handles month boundaries) ──
+  const weekFrom = new Date(); weekFrom.setDate(weekFrom.getDate() - 6); weekFrom.setHours(0,0,0,0);
+  const weekFromKey = weekFrom.toISOString().split('T')[0];
+  const weekToKey   = todayStr();
+  try {
+    const { data: weekRows } = await sb.from('logs').select('*')
+      .eq('user_id', currentUser.id)
+      .gte('date', weekFromKey).lte('date', weekToKey);
+    if (weekRows) {
+      weekRows.forEach(row => {
+        S.days[row.date] = {
+          habits: row.habits||{}, mood: row.mood||7, weight: row.weight,
+          cals: row.calories, protein: row.protein, sleep: row.sleep,
+          win: row.win||'', log: row.log_text||''
+        };
+      });
+    }
+  } catch(e) { /* non-fatal, fall through with whatever S.days has */ }
+
+  // ── Build 7-day dataset ──
+  const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d  = new Date(); d.setDate(d.getDate() - i);
+    const dk = d.toISOString().split('T')[0];
+    const dayData = S.days[dk] || { habits:{}, mood:null, sleep:null, weight:null };
+    const done  = S.habits.filter(h => dayData.habits[h]).length;
+    const total = S.habits.length;
+    days.push({ dk, date: d, done, total, pct: total > 0 ? done/total : 0,
+                sleep: dayData.sleep, mood: dayData.mood });
   }
-  const totalDone=days.reduce((a,d)=>a+d.done,0);
-  const totalPossible=days.reduce((a,d)=>a+d.total,0);
-  const successRate=totalPossible>0?Math.round(totalDone/totalPossible*100):0;
-  const weekEarned=days.reduce((a,d)=>a+S.habits.filter(h=>(S.days[d.dk]||{habits:{}}).habits[h]).reduce((s,h)=>s+(STAKES[S.habitStakes[h]||'medium']?.earn||40),0),0);
-  const DAYS_SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  let heatmapHTML='<div class="review-heatmap">';
-  days.forEach(d=>{
-    heatmapHTML+=`<div class="review-hm-col">`;
-    S.habits.forEach(h=>{const done=(S.days[d.dk]||{habits:{}}).habits[h];heatmapHTML+=`<div class="review-hm-dot" style="background:${done?'#4ade80':'#262626'}" title="${h}"></div>`;});
-    heatmapHTML+=`<div class="review-hm-label">${DAYS_SHORT[d.date.getDay()]}</div></div>`;
+
+  // ── Stats ──
+  const totalDone     = days.reduce((a,d) => a + d.done, 0);
+  const totalPossible = days.reduce((a,d) => a + d.total, 0);
+  const successRate   = totalPossible > 0 ? Math.round(totalDone / totalPossible * 100) : 0;
+  const weekEarned    = days.reduce((acc, d) => {
+    return acc + S.habits.filter(h => (S.days[d.dk]||{habits:{}}).habits[h])
+      .reduce((s, h) => s + getStakeEarn(S.habitStakes[h]||'medium'), 0);
+  }, 0);
+  const sleepDays  = days.filter(d => d.sleep);
+  const moodDays   = days.filter(d => d.mood);
+  const avgSleep   = sleepDays.length ? (sleepDays.reduce((a,d) => a+d.sleep, 0) / sleepDays.length) : 0;
+  const avgMood    = moodDays.length  ? (moodDays.reduce((a,d)  => a+d.mood,  0) / moodDays.length)  : 0;
+
+  // ── Per-habit consistency ──
+  const habitStats = S.habits.map(h => {
+    const doneCount = days.filter(d => (S.days[d.dk]||{habits:{}}).habits[h]).length;
+    const pct = Math.round((doneCount / 7) * 100);
+    const stake = S.habitStakes[h] || 'medium';
+    return { h, doneCount, pct, stake };
   });
-  heatmapHTML+='</div>';
-  const avgSleep=days.filter(d=>d.sleep).reduce((a,d)=>a+d.sleep,0)/(days.filter(d=>d.sleep).length||1);
-  const avgMood=days.filter(d=>d.mood).reduce((a,d)=>a+d.mood,0)/(days.filter(d=>d.mood).length||1);
-  body.innerHTML=`<div class="review-stat-row">
-    <div class="review-stat"><div class="review-stat-label">% Completion</div><div class="review-stat-val" style="color:${successRate>=80?'var(--green)':successRate>=50?'var(--yellow)':'var(--red)'}">${successRate}%</div></div>
-    <div class="review-stat"><div class="review-stat-label">$V Earned</div><div class="review-stat-val" style="color:var(--accent)">+$V ${weekEarned.toLocaleString()}</div></div>
-    <div class="review-stat"><div class="review-stat-label">Avg Sleep</div><div class="review-stat-val" style="color:var(--blue)">${avgSleep.toFixed(1)}h</div></div>
-    <div class="review-stat"><div class="review-stat-label">Avg Mood</div><div class="review-stat-val" style="color:var(--pink)">${avgMood.toFixed(1)}</div></div>
+  const missedHabits    = habitStats.filter(hs => hs.doneCount <= 3).map(hs => hs.h);
+  const dangerHabits    = habitStats.filter(hs => (hs.stake==='high'||hs.stake==='critical') && hs.pct < 50);
+
+  // ── Heatmap ──
+  let heatmapHTML = '<div class="review-heatmap">';
+  days.forEach(d => {
+    heatmapHTML += `<div class="review-hm-col">`;
+    S.habits.forEach(h => {
+      const done = (S.days[d.dk]||{habits:{}}).habits[h];
+      heatmapHTML += `<div class="review-hm-dot" style="background:${done?'#4ade80':'#262626'}" title="${h} — ${DAYS_SHORT[d.date.getDay()]}"></div>`;
+    });
+    heatmapHTML += `<div class="review-hm-label">${DAYS_SHORT[d.date.getDay()]}</div></div>`;
+  });
+  heatmapHTML += '</div>';
+
+  // ── Per-habit row ──
+  let habitRowsHTML = '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:16px">';
+  habitStats.forEach(hs => {
+    const color = hs.pct >= 70 ? 'var(--green)' : hs.pct >= 40 ? 'var(--yellow)' : 'var(--red)';
+    const stakeInfo = STAKES[hs.stake];
+    habitRowsHTML += `
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px">
+        <span class="stake-tag ${stakeInfo.cls}" style="flex-shrink:0">${stakeInfo.label}</span>
+        <span style="font-size:0.78rem;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${hs.h}</span>
+        <div style="width:80px;background:var(--muted2);border-radius:3px;height:6px;flex-shrink:0">
+          <div style="width:${hs.pct}%;background:${color};height:100%;border-radius:3px"></div>
+        </div>
+        <span style="font-family:'Space Mono',monospace;font-size:0.65rem;color:${color};min-width:38px;text-align:right">${hs.doneCount}/7 days</span>
+      </div>`;
+  });
+  habitRowsHTML += '</div>';
+
+  // ── Danger zone banners ──
+  let dangerHTML = '';
+  if (dangerHabits.length) {
+    dangerHTML = dangerHabits.map(dh => `
+      <div style="background:#1a0700;border:1px solid #fb923c;border-radius:8px;padding:10px 14px;margin-bottom:8px;font-family:'Space Mono',monospace;font-size:0.72rem;color:#fb923c">
+        ⚠ DANGER ZONE — <strong>${dh.h}</strong> at ${dh.pct}% consistency. High-impact habit below 50%.
+      </div>`).join('');
+  }
+
+  // ── Week label ──
+  const fmt = d => d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const weekLabel = `${fmt(days[0].date)} — ${fmt(days[6].date)}`;
+
+  body.innerHTML = `
+    <div style="font-size:0.62rem;color:var(--muted);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px">${weekLabel}</div>
+    <div class="review-stat-row">
+      <div class="review-stat">
+        <div class="review-stat-label">% Completion</div>
+        <div class="review-stat-val" style="color:${successRate>=80?'var(--green)':successRate>=50?'var(--yellow)':'var(--red)'}">${successRate}%</div>
+      </div>
+      <div class="review-stat">
+        <div class="review-stat-label">$V Earned</div>
+        <div class="review-stat-val" style="color:var(--accent)">+$V ${weekEarned.toLocaleString()}</div>
+      </div>
+      <div class="review-stat">
+        <div class="review-stat-label">Avg Sleep</div>
+        <div class="review-stat-val" style="color:var(--blue)">${avgSleep > 0 ? avgSleep.toFixed(1)+'h' : '--'}</div>
+      </div>
+      <div class="review-stat">
+        <div class="review-stat-label">Avg Mood</div>
+        <div class="review-stat-val" style="color:var(--pink)">${avgMood > 0 ? avgMood.toFixed(1) : '--'}</div>
+      </div>
     </div>
+    ${dangerHTML}
     <div style="font-size:0.62rem;color:var(--muted);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">7-Day Habit Matrix</div>
     ${heatmapHTML}
-    <div class="review-ai-box" id="weekly-ai-text"><div class="review-ai-label">AI DEBRIEF</div><span style="color:var(--muted);font-size:0.78rem">Generating analysis...</span></div>`;
-  S.lastWeeklyReview=todayStr(); await saveUserSettings();
+    <div style="font-size:0.62rem;color:var(--muted);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;margin-top:16px">Habit Consistency</div>
+    ${habitRowsHTML}
+    <div class="review-ai-box" id="weekly-ai-text">
+      <div class="review-ai-label">AI DEBRIEF</div>
+      <span style="color:var(--muted);font-size:0.78rem">Generating analysis...</span>
+    </div>`;
+
+  S.lastWeeklyReview = todayStr();
+  await saveUserSettings();
+
   if (S.groqKey) {
     try {
-      const missedHabits=S.habits.filter(h=>days.filter(d=>!(S.days[d.dk]||{habits:{}}).habits[h]).length>=4);
-      const aiText=await callGroq([{role:'user',content:`You are a brutally honest operations director. Weekly debrief. 7-day success rate: ${successRate}%. Habits frequently missed: ${missedHabits.join(', ')||'none'}. $V earned: ${weekEarned}. Avg sleep: ${avgSleep.toFixed(1)}h. Be direct. 3-4 sentences max.`}],200,0.8);
-      document.getElementById('weekly-ai-text').innerHTML='<div class="review-ai-label">AI DEBRIEF</div>'+aiText;
-    } catch(e) { document.getElementById('weekly-ai-text').innerHTML='<div class="review-ai-label">AI DEBRIEF</div><em style="color:var(--muted);font-size:0.78rem">Debrief unavailable.</em>'; }
+      const prompt = `You are a brutally honest operations director. Weekly debrief.
+7-day success rate: ${successRate}%. Habits frequently missed (≤3/7 days): ${missedHabits.join(', ')||'none'}.
+Danger zone (high/critical <50%): ${dangerHabits.map(d=>d.h).join(', ')||'none'}.
+$V earned this week: ${weekEarned}. Avg sleep: ${avgSleep>0?avgSleep.toFixed(1)+'h':'unknown'}. Avg mood: ${avgMood>0?avgMood.toFixed(1):' unknown'}/10.
+Be direct. 3-4 sentences max. No fluff.`;
+      const aiText = await callGroq([{role:'user',content:prompt}], 200, 0.8);
+      document.getElementById('weekly-ai-text').innerHTML = '<div class="review-ai-label">AI DEBRIEF</div>' + aiText;
+    } catch(e) {
+      document.getElementById('weekly-ai-text').innerHTML = '<div class="review-ai-label">AI DEBRIEF</div><em style="color:var(--muted);font-size:0.78rem">Debrief unavailable.</em>';
+    }
   }
 }
 
