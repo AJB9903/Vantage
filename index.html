@@ -640,7 +640,128 @@ body.theme-system.buff-fuel  { box-shadow: inset 0 0 30px #2d2d2d, inset 0 0 60p
     </div>
   </main>
 </div>
+<!-- MONTHLY TRAJECTORY AUDIT MODAL -->
+<div class="modal-overlay hidden" id="monthly-audit-modal">
+  <div class="modal-box wide">
+    <button class="modal-close" id="audit-close-btn" onclick="closeReviewModal('monthly-audit-modal')" style="display:none">✓ Audit Locked — Close</button>
+    <div class="modal-header">
+      <div class="modal-title">Monthly<span> Audit.</span></div>
+      <div class="modal-sub" id="audit-month-label">Loading...</div>
+      <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+        <div id="audit-pip-1" style="width:9px;height:9px;border-radius:50%;background:var(--red);transition:all .2s;transform:scale(1.3)"></div>
+        <div id="audit-pip-2" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
+        <div id="audit-pip-3" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
+        <div id="audit-pip-4" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
+        <div id="audit-pip-5" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
+        <div id="audit-pip-6" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
+      </div>
+    </div>
+    <div class="modal-body">
 
+      <!-- CARD 1: Delusion Gap + Ghost Chart -->
+      <div id="audit-card-1" style="display:block">
+        <div id="audit-ghost-chart"></div>
+        <div id="audit-prev-month-delta"></div>
+        <div style="margin-bottom:20px">
+          <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">The Delusion Gap</div>
+          <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:10px">List the single most tangible, verifiable asset or result you produced this month. Not effort. Not intention. Output only.</p>
+          <textarea class="inp" id="audit-delusion" rows="3" placeholder="e.g. Completed 3 client quotes for GC firm, grossed $840 from Maize Collective..." style="resize:vertical;line-height:1.6"></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end">
+          <button onclick="auditGoTo(2)" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer">Friction Audit ›</button>
+        </div>
+      </div>
+
+      <!-- CARD 2: Friction Audit + Excuse Repetition Alert -->
+      <div id="audit-card-2" style="display:none">
+        <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Friction Audit — Your Month in Failures</div>
+        <div id="audit-friction-history" style="margin-bottom:14px"></div>
+        <div id="audit-excuse-alert" style="margin-bottom:10px"></div>
+        <div style="margin-bottom:20px">
+          <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:8px">What is the root structural failure you are refusing to fix?</p>
+          <textarea class="inp" id="audit-root-failure" rows="4" placeholder="Not a symptom. The actual root cause. e.g. I schedule deep work at night when I have zero executive function left..." style="resize:vertical;line-height:1.6" oninput="checkExcuseRepetition(this.value)"></textarea>
+        </div>
+        <div style="margin-bottom:20px">
+          <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--accent2);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">ROI Evaluation</div>
+          <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:8px">Which habit yielded the lowest return on investment this month?</p>
+          <select class="inp" id="audit-low-roi" style="font-size:0.82rem;cursor:pointer">
+            <option value="">— Select a habit —</option>
+            ${(S.habits||[]).map(h => `<option value="${h}">${h}</option>`).join('')}
+          </select>
+          <div style="font-size:0.62rem;font-family:'Space Mono',monospace;color:var(--muted);margin-top:6px">⚠ You will be forced to downgrade or archive this habit on next login.</div>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <button onclick="auditGoTo(1)" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:11px 20px;font-family:'Syne',sans-serif;font-size:0.82rem;cursor:pointer">← Back</button>
+          <button onclick="auditValidateCard2()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer">Reality Check ›</button>
+        </div>
+      </div>
+
+      <!-- CARD 3: Trajectory Reality Check -->
+      <div id="audit-card-3" style="display:none">
+        <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Trajectory Reality Check</div>
+        <div style="background:#0d0000;border:1px solid #3a0000;border-radius:8px;padding:12px 14px;margin-bottom:16px">
+          <div style="font-size:0.68rem;color:#fca5a5;font-family:'Space Mono',monospace;line-height:1.6">Based strictly on this month's data — not your potential, not your intentions — if you repeat this exact month 12 times, where will you be in one year? Be specific. No hedging.</div>
+        </div>
+        <textarea class="inp" id="audit-trajectory" rows="5" placeholder="e.g. I will have done zero work on GC licensing. Maize Collective will have the same 3 items I listed this month. I will be 8lbs heavier..." style="resize:vertical;line-height:1.6;border-color:rgba(248,113,113,0.3)"></textarea>
+        <div style="display:flex;justify-content:space-between;margin-top:16px">
+          <button onclick="auditGoTo(2)" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:11px 20px;font-family:'Syne',sans-serif;font-size:0.82rem;cursor:pointer">← Back</button>
+          <button onclick="auditValidateCard3()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer">Hard Truth ›</button>
+        </div>
+      </div>
+
+      <!-- CARD 4: Hard Truth -->
+      <div id="audit-card-4" style="display:none">
+        <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">The Hard Truth</div>
+        <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:14px">What is the one hard truth about your performance this month you are actively trying to ignore? This is not shared. It is for the record.</p>
+        <textarea class="inp" id="audit-hard-truth" rows="5" placeholder="Be honest. No one sees this but you and the data." style="resize:vertical;line-height:1.6;border-color:rgba(248,113,113,0.3)"></textarea>
+        <div style="display:flex;justify-content:space-between;margin-top:16px">
+          <button onclick="auditGoTo(3)" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:11px 20px;font-family:'Syne',sans-serif;font-size:0.82rem;cursor:pointer">← Back</button>
+          <button onclick="auditValidateCard4()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer">Next-Month Delta ›</button>
+        </div>
+      </div>
+
+      <!-- CARD 5: Next-Month Delta -->
+      <div id="audit-card-5" style="display:none">
+        <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">⚡ Next-Month Non-Negotiable</div>
+        <p style="font-size:0.72rem;color:var(--muted);line-height:1.7;margin-bottom:14px">One measurable commitment for next month. This will be injected as a permanent anchor into your daily logger and surfaced at the top of next month's audit. Vague statements will be rejected.</p>
+        <textarea class="inp" id="audit-month-delta" rows="5" placeholder="e.g. File GC contractor license application by the 15th. List 10 new items on Maize. Run 3x/week minimum." style="resize:vertical;line-height:1.6;font-size:0.88rem;border-color:rgba(248,113,113,0.3)"></textarea>
+        <div id="audit-card5-err" style="color:var(--red);font-family:'Space Mono',monospace;font-size:0.68rem;min-height:18px;margin-top:6px"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:16px">
+          <button onclick="auditGoTo(4)" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:11px 20px;font-family:'Syne',sans-serif;font-size:0.82rem;cursor:pointer">← Back</button>
+          <button onclick="submitMonthlyAudit()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer">Lock Audit ›</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MANDATORY PRUNING MODAL -->
+<div class="modal-overlay hidden" id="prune-modal">
+  <div class="modal-box" style="max-width:440px">
+    <div class="modal-header">
+      <div class="modal-title" style="font-size:1.2rem">Habit <span>Pruning.</span></div>
+      <div class="modal-sub">Low-ROI habit flagged from Monthly Audit</div>
+    </div>
+    <div class="modal-body">
+      <div style="background:#0d0000;border:1px solid var(--red);border-radius:8px;padding:14px;margin-bottom:18px">
+        <div style="font-size:0.62rem;font-family:'Space Mono',monospace;color:var(--red);margin-bottom:6px;letter-spacing:1px">⚠ MANDATORY RESOLUTION</div>
+        <div style="font-size:0.9rem;font-weight:700;color:var(--text)" id="prune-habit-name">—</div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:4px">You flagged this as your lowest-ROI habit last month. You cannot dismiss this.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="resolvePrune('downgrade')" style="background:#0a0800;border:1.5px solid var(--yellow);color:var(--yellow);border-radius:8px;padding:14px;font-family:'Space Mono',monospace;font-size:0.72rem;cursor:pointer;text-align:left;line-height:1.6">
+          <strong>▼ Downgrade to Maintenance (×0.5 weight)</strong><br>
+          <span style="color:var(--muted);font-size:0.65rem">Keep tracking it, remove its impact on your weighted score.</span>
+        </button>
+        <button onclick="resolvePrune('archive')" style="background:#0d0000;border:1.5px solid var(--red);color:var(--red);border-radius:8px;padding:14px;font-family:'Space Mono',monospace;font-size:0.72rem;cursor:pointer;text-align:left;line-height:1.6">
+          <strong>✕ Archive — Remove from tracker</strong><br>
+          <span style="color:var(--muted);font-size:0.65rem">Permanently drop it. Historical data is preserved.</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- WEEKLY REVIEW MODAL -->
 <div class="modal-overlay hidden" id="weekly-review-modal">
   <div class="modal-box wide">
@@ -774,6 +895,10 @@ let S = {
   purchases: [], goalBonusGiven: {},
   lastWeeklyReview: null, lastMonthlyRecap: null,
   lastWeekDelta: '', weeklyRecaps: {},
+  monthlyAudits: {},
+  pendingPruneHabit: null,
+  dailyFrictionQuestion: '',
+  monthDelta: '',
   inventory: {}, activeBuffs: {},
   unlockedThemes: [], activeTheme: 'default',
   weeklyNonNeg: [],
@@ -1087,6 +1212,8 @@ async function initApp() {
   checkTemporalReviews();
   applyTheme(S.activeTheme || 'default');
   initAdminPanel();
+  checkPendingPrune();
+  injectDeltaAnchor();
 }
 
 // ─── SUPABASE DATA ────────────────────────────────────────────────────────────
@@ -1119,6 +1246,10 @@ async function loadUserSettings() {
       S.weeklyNonNegBonusGiven = meta.weeklyNonNegBonusGiven || {};
       S.lastWeekDelta          = meta.lastWeekDelta          || '';
       S.weeklyRecaps           = meta.weeklyRecaps           || {};
+      S.monthlyAudits          = meta.monthlyAudits          || {};
+      S.pendingPruneHabit      = meta.pendingPruneHabit      || null;
+      S.dailyFrictionQuestion  = meta.dailyFrictionQuestion  || '';
+      S.monthDelta             = meta.monthDelta             || '';
       const savedStakes = meta.habitStakes || {};
       S.habitStakes = Object.keys(savedStakes).length > 0 ? savedStakes : {...DEFAULT_HABIT_STAKES};
       // Purge expired buffs
@@ -1153,6 +1284,10 @@ async function saveUserSettings() {
     weeklyNonNegBonusGiven: S.weeklyNonNegBonusGiven||{},
     lastWeekDelta: S.lastWeekDelta||'',
     weeklyRecaps: S.weeklyRecaps||{},
+    monthlyAudits: S.monthlyAudits||{},
+    pendingPruneHabit: S.pendingPruneHabit||null,
+    dailyFrictionQuestion: S.dailyFrictionQuestion||'',
+    monthDelta: S.monthDelta||'',
   };
   await sb.from('user_settings').upsert({
     user_id: currentUser.id, habits: S.habits,
@@ -1210,6 +1345,7 @@ function initToday(dk) {
   renderHabitList(dk);
   renderWeeklyGoals();
   renderWeeklyNonNeg();
+  injectDailyFrictionQuestion();
   updateVDisplay();
   renderBuffBar();
   generateBriefing();
@@ -1337,7 +1473,12 @@ function buildGoalItem(g, interactive) {
   let countdown='';
   if (g.deadline&&urg.days!==null&&urg.days<=7) countdown=`<div class="goal-countdown ${countdownClass(urg.cls)}">${urg.level===4?'⚠ Overdue by '+Math.abs(urg.days)+' day(s)':urg.label+' — '+new Date(g.deadline+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</div>`;
   const bonusTag=S.goalBonusGiven[g.id]?'<span style="font-size:0.6rem;font-family:\'Space Mono\',monospace;color:var(--accent);margin-left:6px">+$V500 ✓</span>':'';
-  el.innerHTML=`<div class="goal-top"><div class="goal-name">${g.name}${bonusTag}</div>${deadlineBadge}</div>
+  const deltaTag = g._weeklyDelta
+    ? `<span style="font-size:0.55rem;font-family:'Space Mono',monospace;color:var(--yellow);letter-spacing:1.5px;text-transform:uppercase;margin-left:7px;border:1px solid var(--yellow);border-radius:3px;padding:1px 5px">⚡ WEEKLY DELTA</span>`
+    : (g._monthDelta
+    ? `<span style="font-size:0.55rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:1.5px;text-transform:uppercase;margin-left:7px;border:1px solid var(--red);border-radius:3px;padding:1px 5px">⚡ MONTHLY DELTA</span>`
+    : '');
+  el.innerHTML=`<div class="goal-top"><div class="goal-name">${g.name}${bonusTag}${deltaTag}</div>${deadlineBadge}</div>
     <div class="goal-progress-row">
       <input type="range" min="0" max="10" value="${g.progress||0}" class="goal-slider" ${interactive?'':'disabled'}
         oninput="updateGoalProgress('${g.id}',this.value,this.closest('.goal-item').querySelector('.goal-score'))"
@@ -2556,7 +2697,22 @@ async function submitWeeklyRecap() {
   S.lastWeekDelta          = delta;
   S.lastWeeklyReview       = todayStr();
 
+  // Pin delta as a weekly commitment goal (replace any prior delta goal)
+  S.goals = S.goals.filter(g => !g._weeklyDelta);
+  const nextSunday = new Date(); nextSunday.setDate(nextSunday.getDate() + (7 - nextSunday.getDay()));
+  S.goals.unshift({
+    id: 'wdelta-' + weekKey,
+    name: delta,
+    deadline: nextSunday.toISOString().split('T')[0],
+    progress: 0,
+    type: 'weekly',
+    _weeklyDelta: true
+  });
+
   await saveUserSettings();
+  renderWeeklyGoals();
+  renderGoalsEditor();
+  initToday(todayStr());
 
   const closeBtn = document.getElementById('recap-close-btn');
   closeBtn.style.display    = 'block';
@@ -2801,11 +2957,314 @@ function adminTriggerWeekly() {
   showWeeklyReview();
 }
 function adminTriggerMonthly() {
-  // Fire for current month
   const now = new Date();
   const monthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2,'0');
   S.lastMonthlyRecap = null;
-  showMonthlyRecap(monthKey);
+  showMonthlyAudit(monthKey);
+}
+// ─── MONTHLY TRAJECTORY AUDIT ────────────────────────────────────────────────
+
+function auditGoTo(n) {
+  const total = 5;
+  for (let i = 1; i <= total; i++) {
+    const card = document.getElementById('audit-card-' + i);
+    if (card) card.style.display = i === n ? 'block' : 'none';
+    const pip = document.getElementById('audit-pip-' + i);
+    if (pip) {
+      pip.style.background = i < n ? 'var(--green)' : i === n ? 'var(--red)' : 'var(--border)';
+      pip.style.transform  = i === n ? 'scale(1.3)' : 'scale(1)';
+    }
+  }
+}
+
+function auditValidateCard(fieldId, nextCard) {
+  const el = document.getElementById(fieldId);
+  if (!el || el.value.trim().length < 10) {
+    if (el) { el.style.borderColor = 'var(--red)'; el.focus(); }
+    return false;
+  }
+  el.style.borderColor = '';
+  auditGoTo(nextCard);
+  return true;
+}
+
+function auditValidateCard2() {
+  if (!auditValidateCard('audit-root-failure', 0)) return;
+  auditGoTo(3);
+}
+function auditValidateCard3() { auditValidateCard('audit-trajectory', 4); }
+function auditValidateCard4() { auditValidateCard('audit-hard-truth', 5); }
+
+// ── Excuse Repetition Alert ──────────────────────────────────────────────────
+function extractKeywords(text) {
+  const STOP = new Set(['the','a','an','i','to','and','or','but','is','was','it',
+    'my','me','we','this','that','so','in','of','for','on','at','be','have',
+    'did','not','with','just','been','they','from','are','what','when','how',
+    'your','our','its','as','up','do','if','by','get','has','had','he','she']);
+  return text.toLowerCase()
+    .replace(/[^a-z\s]/g, '')
+    .split(/\s+/)
+    .filter(w => w.length > 3 && !STOP.has(w));
+}
+
+function checkExcuseRepetition(currentText) {
+  const alertEl = document.getElementById('audit-excuse-alert');
+  if (!alertEl) return;
+  const now   = new Date();
+  const prevMk = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    .toISOString().slice(0, 7);
+  const prevAudit = (S.monthlyAudits || {})[prevMk];
+  if (!prevAudit || !prevAudit.rootFailure) { alertEl.innerHTML = ''; return; }
+
+  const currentKw  = new Set(extractKeywords(currentText));
+  const prevKw     = extractKeywords(prevAudit.rootFailure);
+  const shared     = prevKw.filter(w => currentKw.has(w));
+
+  if (shared.length >= 2) {
+    alertEl.innerHTML = `
+      <div style="background:#150000;border:1.5px solid var(--red);border-radius:8px;padding:12px 14px;margin-bottom:10px;animation:pulseRed 1.5s ease infinite">
+        <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px">⚠ Excuse Repetition Detected</div>
+        <div style="font-size:0.72rem;color:#fca5a5;line-height:1.6">You cited this same obstacle last month. Your previous strategy failed. Matching terms: <strong>${shared.slice(0,4).join(', ')}</strong>. What is your new, specific approach?</div>
+      </div>`;
+  } else {
+    alertEl.innerHTML = '';
+  }
+}
+
+async function showMonthlyAudit(monthKey) {
+  const modal = document.getElementById('monthly-audit-modal');
+  modal.classList.remove('hidden');
+  document.getElementById('audit-close-btn').style.display = 'none';
+  auditGoTo(1);
+
+  const [yr, mo] = monthKey.split('-').map(Number);
+  const monthName = new Date(yr, mo - 1).toLocaleDateString('en-US', { month:'long', year:'numeric' });
+  document.getElementById('audit-month-label').textContent = monthName + ' Trajectory Audit';
+
+  // ── Ghost chart: last month vs this month habit completion ──
+  const prevMk   = new Date(yr, mo - 2, 1).toISOString().slice(0, 7);
+  const daysInMo = new Date(yr, mo, 0).getDate();
+
+  function monthCompletion(mk) {
+    const [y2, m2] = mk.split('-').map(Number);
+    const d2 = new Date(y2, m2, 0).getDate();
+    return S.habits.map(h => {
+      let done = 0;
+      for (let d = 1; d <= d2; d++) {
+        const dk = `${y2}-${String(m2).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        if ((S.days[dk] || {habits:{}}).habits[h]) done++;
+      }
+      return { name: h, pct: Math.round((done / d2) * 100) };
+    });
+  }
+
+  const thisMonthData = monthCompletion(monthKey);
+  const prevMonthData = monthCompletion(prevMk);
+
+  document.getElementById('audit-ghost-chart').innerHTML = `
+    <div style="font-size:0.58rem;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Month-Over-Month Mirror</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px">
+      ${thisMonthData.map((h, i) => {
+        const prev    = prevMonthData[i]?.pct || 0;
+        const curr    = h.pct;
+        const delta   = curr - prev;
+        const cCurr   = curr >= 70 ? '#4ade80' : curr >= 40 ? '#fbbf24' : '#f87171';
+        const dStr    = delta > 0 ? `<span style="color:#4ade80">+${delta}%</span>` : delta < 0 ? `<span style="color:#f87171">${delta}%</span>` : `<span style="color:var(--muted)">—</span>`;
+        return `<div style="display:grid;grid-template-columns:1fr 60px 60px 36px;align-items:center;gap:8px;margin-bottom:7px">
+          <span style="font-size:0.73rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.name}</span>
+          <div style="position:relative;height:5px;background:var(--muted2);border-radius:3px">
+            <div style="position:absolute;left:0;top:0;height:100%;width:${prev}%;background:#555;border-radius:3px;opacity:0.5"></div>
+          </div>
+          <div style="position:relative;height:5px;background:var(--muted2);border-radius:3px">
+            <div style="position:absolute;left:0;top:0;height:100%;width:${curr}%;background:${cCurr};border-radius:3px"></div>
+          </div>
+          <span style="font-size:0.6rem;font-family:'Space Mono',monospace;text-align:right">${dStr}</span>
+        </div>`;
+      }).join('')}
+      <div style="display:grid;grid-template-columns:1fr 60px 60px 36px;gap:8px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+        <span></span>
+        <span style="font-size:0.5rem;font-family:'Space Mono',monospace;color:#555">LAST MO</span>
+        <span style="font-size:0.5rem;font-family:'Space Mono',monospace;color:var(--muted)">THIS MO</span>
+        <span style="font-size:0.5rem;font-family:'Space Mono',monospace;color:var(--muted)">Δ</span>
+      </div>
+    </div>`;
+
+  // ── Previous month delta accountability ──
+  const prevAudit = (S.monthlyAudits || {})[prevMk];
+  document.getElementById('audit-prev-month-delta').innerHTML = prevAudit?.monthDelta ? `
+    <div style="background:#1a0000;border:1px solid var(--red);border-radius:8px;padding:12px 16px;margin-bottom:16px">
+      <div style="font-size:0.58rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">⚡ Last Month's Commitment — Did You Deliver?</div>
+      <div style="font-size:0.82rem;color:var(--text);line-height:1.55;font-style:italic">"${prevAudit.monthDelta}"</div>
+    </div>` : '';
+
+  // ── Friction history for card 2 ──
+  const frictionHistory = Object.entries(S.weeklyRecaps || {})
+    .filter(([k]) => k.startsWith(monthKey.slice(0,7)))
+    .map(([k, v]) => v.friction).filter(Boolean);
+
+  document.getElementById('audit-friction-history').innerHTML = frictionHistory.length ? `
+    <div style="font-size:0.58rem;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Weekly Friction Points This Month</div>
+    ${frictionHistory.map((f, i) => `
+      <div style="background:var(--surface2);border-left:3px solid var(--red);padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:6px">
+        <div style="font-size:0.58rem;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:3px">Week ${i + 1}</div>
+        <div style="font-size:0.72rem;color:var(--text);line-height:1.5;font-style:italic">"${f}"</div>
+      </div>`).join('')}` : `<div style="font-size:0.72rem;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:12px;font-style:italic">No weekly friction points recorded this month.</div>`;
+
+  // ── Populate habit dropdown ──
+  const roiSelect = document.getElementById('audit-low-roi');
+  roiSelect.innerHTML = '<option value="">— Select a habit —</option>' +
+    (S.habits||[]).map(h => `<option value="${h}">${h}</option>`).join('');
+}
+
+async function submitMonthlyAudit() {
+  const delta  = document.getElementById('audit-month-delta').value.trim();
+  const errEl  = document.getElementById('audit-card5-err');
+  if (delta.length < 10) {
+    errEl.textContent = '⚠ Be specific. At least 10 characters required.';
+    document.getElementById('audit-month-delta').style.borderColor = 'var(--red)';
+    return;
+  }
+  errEl.textContent = '';
+
+  const now     = new Date();
+  const monthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2,'0');
+  const rootFail = document.getElementById('audit-root-failure').value.trim();
+  const lowRoi   = document.getElementById('audit-low-roi').value;
+
+  if (!S.monthlyAudits) S.monthlyAudits = {};
+  S.monthlyAudits[monthKey] = {
+    delusion:     document.getElementById('audit-delusion').value.trim(),
+    rootFailure:  rootFail,
+    lowRoiHabit:  lowRoi,
+    trajectory:   document.getElementById('audit-trajectory').value.trim(),
+    hardTruth:    document.getElementById('audit-hard-truth').value.trim(),
+    monthDelta:   delta,
+    savedAt:      new Date().toISOString()
+  };
+
+  S.monthDelta = delta;
+
+  // Queue mandatory prune
+  if (lowRoi) {
+    S.pendingPruneHabit = lowRoi;
+  }
+
+  // Generate daily friction question from root failure
+  if (rootFail.length > 10) {
+    S.dailyFrictionQuestion = generateFrictionQuestion(rootFail);
+  }
+
+  // Pin month delta as a goal
+  S.goals = S.goals.filter(g => !g._monthDelta);
+  const nextMoEnd = new Date(now.getFullYear(), now.getMonth() + 2, 0);
+  S.goals.unshift({
+    id: 'maudit-' + monthKey,
+    name: delta,
+    deadline: nextMoEnd.toISOString().split('T')[0],
+    progress: 0,
+    type: 'monthly',
+    _monthDelta: true
+  });
+
+  S.lastMonthlyRecap = monthKey;
+  await saveUserSettings();
+  renderGoalsEditor();
+  renderWeeklyGoals();
+  initToday(todayStr());
+
+  const closeBtn = document.getElementById('audit-close-btn');
+  closeBtn.style.display    = 'block';
+  closeBtn.style.background = 'var(--red)';
+  closeBtn.style.color      = '#fff';
+  closeBtn.style.border     = 'none';
+  showToast('⚡ Monthly audit locked. Prune queue and friction question set.');
+}
+
+function generateFrictionQuestion(rootFailure) {
+  const lower = rootFailure.toLowerCase();
+  if (lower.includes('morning') || lower.includes('schedule') || lower.includes('time'))
+    return 'Did you plan and protect your first 2 hours today before opening your phone?';
+  if (lower.includes('energy') || lower.includes('night') || lower.includes('sleep'))
+    return 'Did you protect your sleep last night to have energy for high-impact work today?';
+  if (lower.includes('gym') || lower.includes('train') || lower.includes('workout'))
+    return 'Did you set out your gym gear last night and have a time blocked today?';
+  if (lower.includes('distract') || lower.includes('phone') || lower.includes('focus'))
+    return 'Is your phone on DND and are your first 90 minutes of work already blocked?';
+  // Generic fallback
+  return `Did you take one concrete action against your root friction point today?`;
+}
+
+// ── Mandatory Prune Modal ────────────────────────────────────────────────────
+function checkPendingPrune() {
+  if (!S.pendingPruneHabit) return;
+  const modal = document.getElementById('prune-modal');
+  if (!modal) return;
+  document.getElementById('prune-habit-name').textContent = S.pendingPruneHabit;
+  modal.classList.remove('hidden');
+}
+
+async function resolvePrune(action) {
+  const habit = S.pendingPruneHabit;
+  if (!habit) return;
+  if (action === 'downgrade') {
+    S.habitStakes[habit] = 'low';
+    showToast(`▼ ${habit} downgraded to Maintenance weight.`);
+  } else if (action === 'archive') {
+    S.habits = S.habits.filter(h => h !== habit);
+    delete S.habitStakes[habit];
+    showToast(`✕ ${habit} archived. Historical data preserved.`);
+  }
+  S.pendingPruneHabit = null;
+  await saveUserSettings();
+  document.getElementById('prune-modal').classList.add('hidden');
+  initToday(todayStr());
+  renderGoalsEditor();
+}
+
+function injectDailyFrictionQuestion() {
+  const existing = document.getElementById('daily-friction-q');
+  if (existing) existing.remove();
+  if (!S.dailyFrictionQuestion) return;
+  const el = document.createElement('div');
+  el.id = 'daily-friction-q';
+  el.style.cssText = `background:#0a0800;border:1px solid var(--yellow);border-radius:8px;padding:10px 14px;margin-bottom:12px;`;
+  el.innerHTML = `
+    <div style="font-size:0.55rem;font-family:'Space Mono',monospace;color:var(--yellow);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px">Daily Friction Check</div>
+    <div style="font-size:0.78rem;color:var(--text);line-height:1.55;margin-bottom:8px">${S.dailyFrictionQuestion}</div>
+    <div style="display:flex;gap:8px">
+      <button onclick="logFrictionAnswer(true,this)" style="background:#0d1a0d;border:1px solid var(--green);color:var(--green);border-radius:6px;padding:5px 14px;font-family:'Space Mono',monospace;font-size:0.65rem;cursor:pointer">✓ Yes</button>
+      <button onclick="logFrictionAnswer(false,this)" style="background:#0d0000;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:5px 14px;font-family:'Space Mono',monospace;font-size:0.65rem;cursor:pointer">✕ No</button>
+    </div>`;
+  const target = document.getElementById('wnn-card') || document.getElementById('today-goals') || document.querySelector('.today-section');
+  if (target) target.parentNode.insertBefore(el, target);
+}
+
+function logFrictionAnswer(yes, btn) {
+  btn.parentElement.querySelectorAll('button').forEach(b => b.style.opacity = '0.4');
+  btn.style.opacity = '1';
+  btn.style.fontWeight = '700';
+  if (!yes) showToast('⚠ Friction unresolved. Fix it before tonight.', 3000, true);
+}
+
+function injectDeltaAnchor() {
+  const existing = document.getElementById('delta-anchor-bar');
+  if (existing) existing.remove();
+  if (!S.monthDelta) return;
+  const bar = document.createElement('div');
+  bar.id = 'delta-anchor-bar';
+  bar.style.cssText = `
+    background:#0d0000;border-bottom:2px solid var(--red);
+    padding:8px 20px;font-family:'Space Mono',monospace;
+    font-size:0.62rem;color:#fca5a5;letter-spacing:.5px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    position:sticky;top:0;z-index:50;
+  `;
+  bar.innerHTML = `
+    <span style="color:var(--red);font-weight:700;flex-shrink:0">⚡ MONTHLY DELTA:</span>
+    <span style="font-style:italic;opacity:0.85">${S.monthDelta}</span>
+  `;
+  const main = document.querySelector('.main-content') || document.querySelector('main') || document.body;
+  main.insertBefore(bar, main.firstChild);
 }
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
 (async () => {
