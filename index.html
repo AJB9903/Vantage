@@ -3211,9 +3211,11 @@ async function resolvePrune(action) {
     S.habitStakes[habit] = 'low';
     showToast(`▼ ${habit} downgraded to Maintenance weight.`);
   } else if (action === 'archive') {
-    S.habits = S.habits.filter(h => h !== habit);
+    const idx = S.habits.indexOf(habit);
+    if (idx !== -1) S.habits[idx] = 'New Habit';
     delete S.habitStakes[habit];
-    showToast(`✕ ${habit} archived. Historical data preserved.`);
+    S.habitStakes['New Habit'] = 'medium';
+    showToast(`✕ ${habit} archived. Slot replaced with "New Habit" — rename it in Settings.`);
   }
   S.pendingPruneHabit = null;
   await saveUserSettings();
