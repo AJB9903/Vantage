@@ -653,7 +653,6 @@ body.theme-system.buff-fuel  { box-shadow: inset 0 0 30px #2d2d2d, inset 0 0 60p
         <div id="audit-pip-3" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
         <div id="audit-pip-4" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
         <div id="audit-pip-5" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
-        <div id="audit-pip-6" style="width:9px;height:9px;border-radius:50%;background:var(--border);transition:all .2s"></div>
       </div>
     </div>
     <div class="modal-body">
@@ -712,8 +711,7 @@ body.theme-system.buff-fuel  { box-shadow: inset 0 0 30px #2d2d2d, inset 0 0 60p
       <!-- CARD 4: Hard Truth -->
       <div id="audit-card-4" style="display:none">
         <div style="font-size:0.6rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">The Hard Truth</div>
-        <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:14px">What is the one hard truth about your performance this month you are actively trying to ignore? This is not shared. It is for the record.</p>
-        <textarea class="inp" id="audit-hard-truth" rows="5" placeholder="Be honest. No one sees this but you and the data." style="resize:vertical;line-height:1.6;border-color:rgba(248,113,113,0.3)"></textarea>
+        <p style="font-size:0.72rem;color:var(--muted);line-height:1.6;margin-bottom:14px">What is the one hard truth about your performance this month you are actively trying to ignore?</p>        <textarea class="inp" id="audit-hard-truth" rows="5" placeholder="Be honest. No one sees this but you and the data." style="resize:vertical;line-height:1.6;border-color:rgba(248,113,113,0.3)"></textarea>
         <div style="display:flex;justify-content:space-between;margin-top:16px">
           <button onclick="auditGoTo(3)" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:11px 20px;font-family:'Syne',sans-serif;font-size:0.82rem;cursor:pointer">← Back</button>
           <button onclick="auditValidateCard4()" style="background:var(--red);color:#fff;border:none;border-radius:8px;padding:11px 28px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer">Next-Month Delta ›</button>
@@ -1722,6 +1720,9 @@ async function toggleWeeklyNonNeg(task) {
   if (!S.weeklyNonNegStatus[weekKey]) S.weeklyNonNegStatus[weekKey] = {};
   const prev = S.weeklyNonNegStatus[weekKey][task] || false;
   S.weeklyNonNegStatus[weekKey][task] = !prev;
+  const nowDone = S.weeklyNonNegStatus[weekKey][task];
+  if (nowDone) { addVBalance(500); showToast(`+$V 500 — ${task} ✓`); }
+  else { deductVBalance(500); showToast(`-$V 500 — ${task} unchecked`, 2000, true); }
   await saveUserSettings();
   renderWeeklyNonNeg();
 }
