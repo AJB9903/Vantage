@@ -260,7 +260,119 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .review-ai-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:2px;color:var(--accent);font-family:'Space Mono',monospace;margin-bottom:8px}
 .failure-banner{background:#1a0000;border:2px solid var(--red);border-radius:8px;padding:12px 16px;font-family:'Space Mono',monospace;font-size:0.78rem;color:var(--red);font-weight:700;letter-spacing:1px;text-align:center;margin-bottom:16px;animation:critPulse 1.5s infinite}
 /* Theme selector cards */
+/* ─── VANTAGE GREEN HERO VARS ─────────────────────────────────────── */
+:root {
+  --vg:          #5B9A78;
+  --vg-light:    #7EC49E;
+  --vg-glow:     rgba(91,154,120,0.14);
+  --hero-bg:     #060a08;
+  --hero-surf:   #0d1511;
+  --hero-border: rgba(91,154,120,0.18);
+  --hero-text:   #EDF2EF;
+  --hero-muted:  #7A9A89;
+}
 
+/* ─── PAYWALL / HERO SCREEN ───────────────────────────────────────── */
+#paywall-screen {
+  position:fixed;inset:0;background:var(--hero-bg);
+  z-index:9999;overflow-y:auto;overflow-x:hidden;
+  display:flex;flex-direction:column;
+}
+#paywall-screen::before {
+  content:'';position:fixed;top:-20%;right:-10%;
+  width:60vw;height:70vh;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse,rgba(91,154,120,0.08) 0%,transparent 70%);
+}
+#paywall-screen::after {
+  content:'';position:fixed;bottom:-20%;left:-10%;
+  width:50vw;height:60vh;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse,rgba(91,154,120,0.05) 0%,transparent 70%);
+}
+.hero-nav {
+  position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:24px 40px;border-bottom:1px solid var(--hero-border);
+}
+.hero-logo{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-1px;color:var(--hero-text)}
+.hero-logo span{color:var(--vg)}
+.hero-nav-tag{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--hero-muted);background:rgba(255,255,255,0.04);border:1px solid var(--hero-border);border-radius:4px;padding:5px 12px}
+.hero-nav-op{font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.1);cursor:pointer;transition:color .2s;user-select:none}
+.hero-nav-op:hover{color:var(--hero-muted)}
+.hero-body {
+  position:relative;z-index:2;flex:1;
+  display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+  padding:64px 40px 80px;max-width:1200px;margin:0 auto;width:100%;
+}
+.hero-left{display:flex;flex-direction:column;gap:0;animation:heroFadeUp .7s cubic-bezier(.22,1,.36,1) both}
+@keyframes heroFadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:3px;text-transform:uppercase;color:var(--vg-light);border:1px solid rgba(91,154,120,0.35);background:rgba(91,154,120,0.07);border-radius:100px;padding:6px 14px 6px 10px;width:fit-content;margin-bottom:28px}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--vg);box-shadow:0 0 6px var(--vg);animation:hbPulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes hbPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.85)}}
+.hero-headline{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,5vw,4rem);font-weight:800;letter-spacing:-2.5px;line-height:1.0;color:var(--hero-text);margin-bottom:24px}
+.hero-headline span{color:var(--vg)}
+.hero-sub{font-size:clamp(.9rem,1.5vw,1.05rem);line-height:1.7;color:var(--hero-muted);max-width:440px;margin-bottom:40px}
+.hero-cta{display:inline-flex;align-items:center;gap:10px;background:var(--vg);color:#040a07;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;padding:15px 28px;border-radius:10px;text-decoration:none;cursor:pointer;transition:background .18s,transform .18s,box-shadow .18s;box-shadow:0 4px 24px rgba(91,154,120,.3);width:fit-content;margin-bottom:36px}
+.hero-cta:hover{background:var(--vg-light);transform:translateY(-2px);box-shadow:0 8px 32px rgba(91,154,120,.4)}
+.hero-cta svg{flex-shrink:0;transition:transform .2s}
+.hero-cta:hover svg{transform:translateX(3px)}
+.hero-proof{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.hero-proof-item{display:flex;flex-direction:column;gap:2px}
+.hero-proof-num{font-family:'Syne',sans-serif;font-size:.9rem;font-weight:700;color:var(--hero-text);letter-spacing:-.5px}
+.hero-proof-label{font-family:'Space Mono',monospace;font-size:.55rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--hero-muted)}
+.hero-proof-divider{width:1px;height:28px;background:var(--hero-border);flex-shrink:0}
+.hero-right{display:flex;justify-content:center;align-items:center;animation:heroFadeUp .7s .15s cubic-bezier(.22,1,.36,1) both}
+.hero-phone-wrap{position:relative;width:280px;height:540px;flex-shrink:0}
+.hero-phone{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:240px;height:480px;background:var(--hero-surf);border:1.5px solid rgba(91,154,120,.25);border-radius:36px;overflow:hidden;box-shadow:0 0 0 8px #0a1210,0 0 0 9px rgba(91,154,120,.12),0 40px 80px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.05);animation:floatPhone 5s ease-in-out infinite}
+@keyframes floatPhone{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-10px)}}
+.hero-phone-notch{width:80px;height:24px;background:#060a08;border-radius:0 0 14px 14px;margin:0 auto;position:relative;z-index:5}
+.hero-phone-screen{padding:10px 14px 20px;height:calc(100% - 24px);overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.mp-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid rgba(91,154,120,.12)}
+.mp-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--hero-text);letter-spacing:-.5px}
+.mp-title span{color:var(--vg)}
+.mp-date{font-family:'Space Mono',monospace;font-size:.55rem;color:var(--hero-muted);letter-spacing:1px}
+.mp-score-bar{background:rgba(91,154,120,.08);border:1px solid rgba(91,154,120,.15);border-radius:8px;padding:8px 10px;display:flex;align-items:center;justify-content:space-between}
+.mp-score-label{font-family:'Space Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:1px;color:var(--hero-muted)}
+.mp-score-val{font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--vg);letter-spacing:-.5px}
+.mp-habits{display:flex;flex-direction:column;gap:5px}
+.mp-habit{display:flex;align-items:center;gap:7px;padding:7px 8px;border-radius:6px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05)}
+.mp-habit.done{background:rgba(91,154,120,.08);border-color:rgba(91,154,120,.18)}
+.mp-cb{width:14px;height:14px;border-radius:3px;border:1.5px solid rgba(255,255,255,.2);flex-shrink:0;font-size:.5rem;display:flex;align-items:center;justify-content:center;color:#040a07}
+.mp-habit.done .mp-cb{background:var(--vg);border-color:var(--vg);font-weight:700}
+.mp-hname{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:600;color:var(--hero-text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp-stake{font-family:'Space Mono',monospace;font-size:.42rem;font-weight:700;letter-spacing:.5px;padding:2px 5px;border-radius:3px;flex-shrink:0}
+.mp-stake.high{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+.mp-stake.crit{background:rgba(248,113,113,.1);color:#f87171;border:1px solid rgba(248,113,113,.2)}
+.mp-stake.med{background:rgba(56,189,248,.08);color:#38bdf8;border:1px solid rgba(56,189,248,.18)}
+.mp-briefing{margin-top:2px;background:rgba(91,154,120,.06);border:1px solid rgba(91,154,120,.15);border-radius:8px;padding:8px 10px;flex:1}
+.mp-brief-label{font-family:'Space Mono',monospace;font-size:.48rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--vg);margin-bottom:5px;font-weight:700}
+.mp-brief-text{font-size:.62rem;line-height:1.55;color:rgba(237,242,239,.65);font-family:'Syne',sans-serif}
+.hero-float-card{position:absolute;background:var(--hero-surf);border:1px solid rgba(91,154,120,.25);border-radius:12px;padding:12px 16px;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03);z-index:10}
+.hero-float-score{top:30px;right:-28px;min-width:120px;animation:floatCard1 5.5s ease-in-out infinite}
+@keyframes floatCard1{0%,100%{transform:translateY(0) rotate(2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+.hero-float-streak{bottom:40px;left:-36px;animation:floatCard2 5s .8s ease-in-out infinite;display:flex;align-items:center;gap:10px}
+@keyframes floatCard2{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-6px) rotate(-1.5deg)}}
+.hfc-label{font-family:'Space Mono',monospace;font-size:.5rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--hero-muted);margin-bottom:3px}
+.hfc-val{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:var(--vg);letter-spacing:-1px;line-height:1}
+.hfc-val span{font-size:.9rem;opacity:.7}
+.hfc-icon{font-size:1.4rem;line-height:1}
+.hfc-streak-text .hfc-val{font-size:1rem;color:var(--hero-text)}
+.hfc-streak-text .hfc-label{margin-bottom:0;margin-top:3px}
+@media(max-width:768px){
+  .hero-nav{padding:16px 20px}
+  .hero-nav-tag{display:none}
+  .hero-body{grid-template-columns:1fr;padding:32px 20px 60px;gap:56px;text-align:center}
+  .hero-badge,.hero-cta{margin-left:auto;margin-right:auto}
+  .hero-sub{margin-left:auto;margin-right:auto}
+  .hero-proof{justify-content:center}
+  .hero-headline{letter-spacing:-1.5px}
+  .hero-phone-wrap{width:240px;height:460px}
+  .hero-phone{width:200px;height:400px}
+  .hero-float-score{right:-10px;top:20px}
+  .hero-float-streak{left:-10px;bottom:30px}
+}
+@media(max-width:400px){
+  .hero-float-score,.hero-float-streak{display:none}
+}
 </style>
 </head>
 <body>
@@ -288,13 +400,54 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="auth-err" id="auth-err"></div>
   </div>
 </div>
-<div id="paywall-screen" style="display:flex;position:fixed;inset:0;background:#000;align-items:center;justify-content:center;z-index:9999;padding:24px">
-  <div style="text-align:center;border:1px solid #242424;border-radius:14px;padding:56px 48px;background:#0c0c0c;max-width:440px;width:100%">
-    <div style="font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:6px;text-transform:uppercase;color:#e11d48;margin-bottom:16px">Strategic Execution Engine</div>
-    <div style="font-size:3rem;font-weight:800;letter-spacing:-3px;margin-bottom:8px;color:#fff">VANTAGE</div>
-    <div style="font-family:'Space Mono',monospace;font-size:0.62rem;color:#888;letter-spacing:2px;text-transform:uppercase;margin-bottom:48px;padding:8px 16px;border:1px solid #242424;border-radius:6px;display:inline-block">Session Not Initialized</div><br>
-    <a href="https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00" style="display:block;width:100%;background:#e11d48;color:#fff;border:none;border-radius:10px;padding:16px 24px;font-family:'Space Mono',monospace;font-size:0.82rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-decoration:none;margin-bottom:32px">Purchase Lifetime License   $6.99</a>
-    <div onclick="operatorLogin()" style="font-family:'Space Mono',monospace;font-size:0.6rem;color:#333;cursor:pointer;letter-spacing:1px;text-transform:uppercase" onmouseover="this.style.color='#888'" onmouseout="this.style.color='#333'">Operator Login</div>
+<div id="paywall-screen" style="display:flex">
+  <nav class="hero-nav">
+    <div class="hero-logo">VANTAGE<span>.</span></div>
+    <div class="hero-nav-tag">Personal Execution OS</div>
+    <div class="hero-nav-op" onclick="operatorLogin()">Operator</div>
+  </nav>
+  <div class="hero-body">
+    <div class="hero-left">
+      <div class="hero-badge"><span class="hero-badge-dot"></span>Now Available — v2.0</div>
+      <h1 class="hero-headline">Your goals deserve<br>a real <span>system.</span></h1>
+      <p class="hero-sub">Vantage is your personal command center — track habits, hit goals, monitor your body, and get AI-powered daily briefings. One focused dashboard. No subscriptions.</p>
+      <a href="https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00" class="hero-cta">
+        Get Access — $6.99 Lifetime
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <div class="hero-proof">
+        <div class="hero-proof-item"><span class="hero-proof-num">Lifetime</span><span class="hero-proof-label">One-time payment</span></div>
+        <div class="hero-proof-divider"></div>
+        <div class="hero-proof-item"><span class="hero-proof-num">AI-Powered</span><span class="hero-proof-label">Daily briefings</span></div>
+        <div class="hero-proof-divider"></div>
+        <div class="hero-proof-item"><span class="hero-proof-num">5 Modules</span><span class="hero-proof-label">Habits · Goals · Body · Calendar · Wins</span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-phone-wrap">
+        <div class="hero-float-card hero-float-score">
+          <div class="hfc-label">Execution Score</div>
+          <div class="hfc-val">94<span>%</span></div>
+        </div>
+        <div class="hero-phone">
+          <div class="hero-phone-notch"></div>
+          <div class="hero-phone-screen">
+            <div class="mp-header"><div class="mp-title">Today<span>.</span></div><div class="mp-date">MAR 24</div></div>
+            <div class="mp-score-bar"><div class="mp-score-label">Daily Score</div><div class="mp-score-val">94%</div></div>
+            <div class="mp-habits">
+              <div class="mp-habit done"><div class="mp-cb">✓</div><div class="mp-hname">Morning workout</div><div class="mp-stake high">HIGH</div></div>
+              <div class="mp-habit done"><div class="mp-cb">✓</div><div class="mp-hname">Deep work block</div><div class="mp-stake crit">CRIT</div></div>
+              <div class="mp-habit"><div class="mp-cb"></div><div class="mp-hname">Evening review</div><div class="mp-stake med">MED</div></div>
+            </div>
+            <div class="mp-briefing"><div class="mp-brief-label">📋 AI Briefing</div><div class="mp-brief-text">Strong momentum. 2 critical habits cleared. Protect your evening block.</div></div>
+          </div>
+        </div>
+        <div class="hero-float-card hero-float-streak">
+          <div class="hfc-icon">🔥</div>
+          <div class="hfc-streak-text"><div class="hfc-val">14 days</div><div class="hfc-label">Current streak</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
