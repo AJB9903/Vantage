@@ -623,7 +623,7 @@ textarea.p3-inp{min-height:110px;resize:vertical;line-height:1.6}
       <div class="hero-badge"><span class="hero-badge-dot"></span>Now Available — v2.0</div>
       <h1 class="hero-headline">Your goals deserve<br>a real <span>system.</span></h1>
       <p class="hero-sub">Vantage is your personal command center — track habits, hit goals, monitor your body, and get AI-powered daily briefings. One focused dashboard. No subscriptions.</p>
-      <a href="https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00" class="hero-cta">
+      <a href="#" class="hero-cta" onclick="handlePurchase();return false;">
         Get Access — $6.99 Lifetime
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
@@ -762,7 +762,7 @@ textarea.p3-inp{min-height:110px;resize:vertical;line-height:1.6}
           <div class="p2-include-item"><div class="p2-include-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="p2-include-text"><div class="p2-include-name">AI Coach</div><div class="p2-include-desc">Personalized daily briefings, friction analysis, accountability prompts</div></div></div>
           <div class="p2-include-item"><div class="p2-include-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="p2-include-text"><div class="p2-include-name">Monthly Reviews</div><div class="p2-include-desc">Heatmaps, trend charts, goal audits, and performance scoring</div></div></div>
         </div>
-        <a href="https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00" class="p2-buy-btn">
+        <a href="#" class="p2-buy-btn" onclick="handlePurchase();return false;">
           Get Lifetime Access — $6.99
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
@@ -2744,7 +2744,27 @@ function showPaywall() {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app').classList.remove('visible');
 }
+// ─── STRIPE CHECKOUT ──────────────────────────────────────────────────────────
+async function handlePurchase() {
+  // If user is already logged in, attach their ID so webhook knows who paid
+  const { data: { session } } = await sb.auth.getSession();
+  const baseUrl = 'https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00';
+  if (session?.user?.id) {
+    window.location.href = baseUrl + '?client_reference_id=' + session.user.id;
+  } else {
+    window.location.href = baseUrl;
+  }
+}
+```
 
+Then **find every place in your HTML** that has this `href` on the buy buttons:
+```
+href="https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00"
+```
+
+**Change each one** from an `<a>` tag to a `<button>` calling that function. Specifically, find this line in your paywall HTML:
+```
+<a href="https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00" class="hero-cta">
 function operatorLogin() {
   const pw = prompt('Access code:');
   if (!pw) return;
