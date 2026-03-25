@@ -455,6 +455,100 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   .p2-checkout{padding:56px 16px 80px}
   .p2-trust-row{gap:6px}
 }
+/* ── P3 BETA BANNER ──────────────────────────────────────────────── */
+.p3-beta-banner{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.p3-ticker-wrap{background:var(--accent);padding:7px 0;overflow:hidden;white-space:nowrap}
+.p3-ticker{display:inline-block;animation:p3Ticker 22s linear infinite;font-family:'Space Mono',monospace;font-size:0.55rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#000}
+@keyframes p3Ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.p3-beta-inner{max-width:1100px;margin:0 auto;padding:56px 40px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.p3-beta-eyebrow{font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.p3-beta-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:p3pulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes p3pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.p3-beta-title{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,2.8vw,2.2rem);font-weight:800;letter-spacing:-1.5px;color:var(--text);line-height:1.1;margin-bottom:16px}
+.p3-beta-title span{color:var(--accent)}
+.p3-beta-body{font-size:.9rem;line-height:1.75;color:var(--muted);max-width:420px;margin-bottom:28px}
+.p3-beta-perks{display:flex;flex-direction:column;gap:10px}
+.p3-beta-perk{display:flex;align-items:flex-start;gap:10px;font-size:.85rem;color:var(--text)}
+.p3-perk-icon{width:20px;height:20px;border-radius:5px;background:rgba(223,255,0,.08);border:1px solid rgba(223,255,0,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.65rem;margin-top:1px}
+.p3-roadmap{display:flex;flex-direction:column;gap:0}
+.p3-roadmap-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:3px;text-transform:uppercase;color:#666;margin-bottom:20px}
+.p3-timeline-item{display:flex;gap:16px;position:relative;padding-bottom:24px}
+.p3-timeline-item:last-child{padding-bottom:0}
+.p3-tl-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:20px}
+.p3-tl-node{width:18px;height:18px;border-radius:50%;border:2px solid #303030;background:var(--surface);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:2}
+.p3-tl-node.done{border-color:var(--accent);background:rgba(223,255,0,.1)}
+.p3-tl-node.active{border-color:var(--accent);background:rgba(223,255,0,.12);box-shadow:0 0 10px rgba(223,255,0,.2)}
+.p3-tl-dot-inner{width:6px;height:6px;border-radius:50%;background:#666}
+.p3-tl-node.done .p3-tl-dot-inner{background:var(--accent)}
+.p3-tl-node.active .p3-tl-dot-inner{background:var(--accent);animation:p3pulse 1.6s ease-in-out infinite}
+.p3-tl-line{width:1px;flex:1;background:var(--border);margin:2px 0}
+.p3-timeline-item:last-child .p3-tl-line{display:none}
+.p3-tl-right{flex:1}
+.p3-tl-status{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:3px}
+.p3-tl-status.done,.p3-tl-status.active{color:var(--accent)}
+.p3-tl-status.soon{color:#666}
+.p3-tl-name{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:var(--text);margin-bottom:2px;line-height:1.3}
+.p3-tl-name.muted{color:var(--muted)}
+.p3-tl-desc{font-family:'Space Mono',monospace;font-size:.56rem;color:#666;letter-spacing:.5px;line-height:1.6}
+.p3-feedback{background:var(--surface);border-top:1px solid var(--border);padding:80px 24px}
+.p3-feedback-inner{max-width:640px;margin:0 auto}
+.p3-feedback-header{margin-bottom:40px}
+.p3-feedback-eyebrow{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.p3-feedback-title{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:800;letter-spacing:-1.5px;color:var(--text);line-height:1.1;margin-bottom:12px}
+.p3-feedback-sub{font-size:.88rem;color:var(--muted);line-height:1.65}
+.p3-type-row{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.p3-type-btn{display:flex;align-items:center;gap:7px;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;font-weight:700;padding:9px 16px;border-radius:8px;border:1px solid #303030;background:var(--surface2);color:var(--muted);cursor:pointer;transition:all .15s;user-select:none}
+.p3-type-btn:hover{color:var(--text);background:#1c1c1c}
+.p3-type-btn.active{border-color:rgba(223,255,0,.35);background:rgba(223,255,0,.06);color:var(--accent)}
+.p3-form{display:flex;flex-direction:column;gap:16px}
+.p3-field-group{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.p3-field{display:flex;flex-direction:column;gap:7px}
+.p3-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.p3-inp{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'Syne',sans-serif;font-size:.88rem;outline:none;transition:border-color .15s;width:100%}
+.p3-inp:focus{border-color:rgba(223,255,0,.4)}
+.p3-inp::placeholder{color:#666}
+textarea.p3-inp{min-height:110px;resize:vertical;line-height:1.6}
+.p3-submit-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.p3-submit-note{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:1px;text-transform:uppercase;color:#666;line-height:1.6}
+.p3-submit-btn{display:flex;align-items:center;gap:8px;background:var(--accent);color:#000;font-family:'Syne',sans-serif;font-size:.88rem;font-weight:800;padding:13px 24px;border-radius:8px;border:none;cursor:pointer;transition:background .15s,transform .15s,box-shadow .15s;box-shadow:0 4px 20px rgba(223,255,0,.15);letter-spacing:-.3px;white-space:nowrap}
+.p3-submit-btn:hover{background:#e8ff2a;transform:translateY(-1px);box-shadow:0 6px 28px rgba(223,255,0,.25)}
+.p3-about{background:var(--surface);border-top:1px solid var(--border);padding:80px 24px 100px;position:relative;overflow:hidden}
+.p3-about::before{content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:500px;height:400px;background:radial-gradient(ellipse,rgba(223,255,0,.03) 0%,transparent 70%);pointer-events:none}
+.p3-about-inner{max-width:760px;margin:0 auto;position:relative;z-index:2}
+.p3-about-eyebrow{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:4px;text-transform:uppercase;color:#666;margin-bottom:40px;display:flex;align-items:center;gap:12px}
+.p3-about-eyebrow::before,.p3-about-eyebrow::after{content:'';flex:1;height:1px;background:var(--border)}
+.p3-builder-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.p3-builder-top{padding:36px 36px 28px;display:flex;gap:24px;align-items:flex-start;border-bottom:1px solid var(--border)}
+.p3-avatar{width:64px;height:64px;border-radius:14px;background:#1c1c1c;border:1px solid #303030;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.6rem;position:relative;overflow:hidden}
+.p3-avatar::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(223,255,0,.06),transparent)}
+.p3-builder-meta{flex:1}
+.p3-builder-name{font-family:'Syne',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-.8px;color:var(--text);margin-bottom:4px;line-height:1.2}
+.p3-builder-role{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.p3-builder-tags{display:flex;flex-wrap:wrap;gap:6px}
+.p3-builder-tag{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:3px 9px}
+.p3-builder-body{padding:28px 36px 32px;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.p3-builder-quote{font-size:.95rem;line-height:1.8;color:var(--muted);border-left:2px solid rgba(223,255,0,.3);padding-left:20px}
+.p3-builder-quote strong{color:var(--text)}
+.p3-builder-stats{display:flex;flex-direction:column;gap:16px}
+.p3-builder-stat{display:flex;flex-direction:column;gap:3px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.p3-builder-stat:last-child{border-bottom:none;padding-bottom:0}
+.p3-stat-num{font-family:'Syne',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:-1px;color:var(--accent);line-height:1}
+.p3-stat-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:1.5px;text-transform:uppercase;color:#666}
+.p3-footer{border-top:1px solid var(--border);padding:24px 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.p3-footer-logo{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:800;letter-spacing:-.5px;color:var(--text)}
+.p3-footer-logo span{color:var(--accent)}
+.p3-footer-copy{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:1px;text-transform:uppercase;color:#666}
+@media(max-width:768px){
+  .p3-beta-inner{grid-template-columns:1fr;padding:48px 20px;gap:40px}
+  .p3-field-group{grid-template-columns:1fr}
+  .p3-builder-top{flex-direction:column;padding:28px 20px 24px}
+  .p3-builder-body{grid-template-columns:1fr;gap:24px;padding:24px 20px 28px}
+  .p3-submit-row{flex-direction:column;align-items:flex-start}
+  .p3-submit-btn{width:100%;justify-content:center}
+  .p3-footer{padding:20px;flex-direction:column;align-items:flex-start;gap:10px}
+  .p3-feedback{padding:56px 20px}
+  .p3-about{padding:56px 20px 80px}
+}
 </style>
 </head>
 <body>
@@ -648,6 +742,91 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
 </section>
 <!-- END PHASE 2 -->
+
+<!-- PHASE 3: TRUST + ROADMAP -->
+<div class="p3-beta-banner">
+  <div class="p3-ticker-wrap"><span class="p3-ticker">ACTIVE DEVELOPMENT &nbsp;·&nbsp; EARLY ACCESS &nbsp;·&nbsp; LIFETIME PRICING LOCKED IN &nbsp;·&nbsp; YOU SHAPE WHAT GETS BUILT NEXT &nbsp;·&nbsp; ACTIVE DEVELOPMENT &nbsp;·&nbsp; EARLY ACCESS &nbsp;·&nbsp; LIFETIME PRICING LOCKED IN &nbsp;·&nbsp; YOU SHAPE WHAT GETS BUILT NEXT &nbsp;·&nbsp; ACTIVE DEVELOPMENT &nbsp;·&nbsp; EARLY ACCESS &nbsp;·&nbsp; LIFETIME PRICING LOCKED IN &nbsp;·&nbsp; YOU SHAPE WHAT GETS BUILT NEXT &nbsp;·&nbsp;</span></div>
+  <div class="p3-beta-inner">
+    <div class="p3-beta-left">
+      <div class="p3-beta-eyebrow"><span class="p3-beta-dot"></span>Beta Transparency</div>
+      <h2 class="p3-beta-title">Built in public.<br>Priced for <span>early believers.</span></h2>
+      <p class="p3-beta-body">Vantage is in active development. That means you'll occasionally see rough edges — and you'll also be first in line when new features drop. Everyone who gets in now locks in lifetime access at the founding price, forever.</p>
+      <div class="p3-beta-perks">
+        <div class="p3-beta-perk"><div class="p3-perk-icon">🔒</div><span>Your $6.99 price is locked permanently — no price increases, ever</span></div>
+        <div class="p3-beta-perk"><div class="p3-perk-icon">🗳️</div><span>Feature requests go directly to the builder — your vote counts</span></div>
+        <div class="p3-beta-perk"><div class="p3-perk-icon">⚡</div><span>Updates ship continuously — you get every improvement automatically</span></div>
+      </div>
+    </div>
+    <div class="p3-roadmap">
+      <div class="p3-roadmap-label">What's shipped · What's next</div>
+      <div class="p3-timeline-item"><div class="p3-tl-left"><div class="p3-tl-node done"><div class="p3-tl-dot-inner"></div></div><div class="p3-tl-line"></div></div><div class="p3-tl-right"><div class="p3-tl-status done">Shipped</div><div class="p3-tl-name">Daily Habit Tracker</div><div class="p3-tl-desc">Stake-weighted scoring, 1-tap check-in, execution score</div></div></div>
+      <div class="p3-timeline-item"><div class="p3-tl-left"><div class="p3-tl-node done"><div class="p3-tl-dot-inner"></div></div><div class="p3-tl-line"></div></div><div class="p3-tl-right"><div class="p3-tl-status done">Shipped</div><div class="p3-tl-name">AI Daily Briefing</div><div class="p3-tl-desc">Personalized morning reports via Groq API</div></div></div>
+      <div class="p3-timeline-item"><div class="p3-tl-left"><div class="p3-tl-node done"><div class="p3-tl-dot-inner"></div></div><div class="p3-tl-line"></div></div><div class="p3-tl-right"><div class="p3-tl-status done">Shipped</div><div class="p3-tl-name">Monthly Reviews & Heatmaps</div><div class="p3-tl-desc">Mood, body, habit data — full calendar history</div></div></div>
+      <div class="p3-timeline-item"><div class="p3-tl-left"><div class="p3-tl-node active"><div class="p3-tl-dot-inner"></div></div><div class="p3-tl-line"></div></div><div class="p3-tl-right"><div class="p3-tl-status active">In Progress</div><div class="p3-tl-name">Mobile UI Polish</div><div class="p3-tl-desc">Full responsive redesign across all pages</div></div></div>
+      <div class="p3-timeline-item"><div class="p3-tl-left"><div class="p3-tl-node"><div class="p3-tl-dot-inner"></div></div><div class="p3-tl-line"></div></div><div class="p3-tl-right"><div class="p3-tl-status soon">Coming Soon</div><div class="p3-tl-name muted">Weekly Non-Negotiables 2.0</div><div class="p3-tl-desc">Smarter accountability loops and streak recovery</div></div></div>
+      <div class="p3-timeline-item"><div class="p3-tl-left"><div class="p3-tl-node"><div class="p3-tl-dot-inner"></div></div><div class="p3-tl-line"></div></div><div class="p3-tl-right"><div class="p3-tl-status soon">Planned</div><div class="p3-tl-name muted">Native iOS App</div><div class="p3-tl-desc">Push notifications, widgets, offline support</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="p3-feedback">
+  <div class="p3-feedback-inner">
+    <div class="p3-feedback-header">
+      <div class="p3-feedback-eyebrow">Direct line to the builder</div>
+      <h2 class="p3-feedback-title">Found a bug? Have an idea?</h2>
+      <p class="p3-feedback-sub">Every submission is read personally. If you spot something broken or want to see a feature, say so — this is how Vantage gets better.</p>
+    </div>
+    <div class="p3-type-row" id="p3-type-row">
+      <div class="p3-type-btn active" onclick="p3SelectType(this)">🐛 &nbsp;Bug Report</div>
+      <div class="p3-type-btn" onclick="p3SelectType(this)">💡 &nbsp;Feature Request</div>
+      <div class="p3-type-btn" onclick="p3SelectType(this)">💬 &nbsp;General Feedback</div>
+    </div>
+    <div class="p3-form">
+      <div class="p3-field-group">
+        <div class="p3-field"><label class="p3-label">Your name</label><input type="text" class="p3-inp" placeholder="First name is fine"/></div>
+        <div class="p3-field"><label class="p3-label">Email (optional)</label><input type="email" class="p3-inp" placeholder="For a reply"/></div>
+      </div>
+      <div class="p3-field"><label class="p3-label">Subject</label><input type="text" class="p3-inp" placeholder="One line summary"/></div>
+      <div class="p3-field"><label class="p3-label">Details</label><textarea class="p3-inp" placeholder="Describe what happened, what you expected, or what you'd love to see built…"></textarea></div>
+      <div class="p3-submit-row">
+        <div class="p3-submit-note">Responses within 48 hrs<br>for anything urgent</div>
+        <button class="p3-submit-btn" onclick="p3HandleSubmit(this)">Send Feedback <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="p3-about">
+  <div class="p3-about-inner">
+    <div class="p3-about-eyebrow">About the Builder</div>
+    <div class="p3-builder-card">
+      <div class="p3-builder-top">
+        <div class="p3-avatar">👤</div>
+        <div class="p3-builder-meta">
+          <div class="p3-builder-name">Built by a practitioner,<br>not a product team.</div>
+          <div class="p3-builder-role">Founder · Developer · Daily User</div>
+          <div class="p3-builder-tags"><span class="p3-builder-tag">Self-improvement</span><span class="p3-builder-tag">Performance systems</span><span class="p3-builder-tag">Solo builder</span><span class="p3-builder-tag">Ships fast</span></div>
+        </div>
+      </div>
+      <div class="p3-builder-body">
+        <blockquote class="p3-builder-quote">"I built Vantage because <strong>every other tracker was either too bloated or too shallow.</strong> I needed one place to log my habits, track my body, review my goals, and get a real read on my momentum — without paying $20/month for a SaaS app that barely works.<br><br>This is the tool I use every single day. If it's useful to you too, that's the whole point."</blockquote>
+        <div class="p3-builder-stats">
+          <div class="p3-builder-stat"><span class="p3-stat-num">365+</span><span class="p3-stat-label">Days using Vantage daily</span></div>
+          <div class="p3-builder-stat"><span class="p3-stat-num">Solo</span><span class="p3-stat-label">One builder, no VC, no team</span></div>
+          <div class="p3-builder-stat"><span class="p3-stat-num">$6.99</span><span class="p3-stat-label">Fair price, not a growth hack</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="p3-footer">
+  <div class="p3-footer-logo">VANTAGE<span>.</span></div>
+  <div class="p3-footer-copy">© 2026 · Personal OS · All rights reserved</div>
+</div>
+<!-- END PHASE 3 -->
+
+</div>  
 </div>
 
 <div id="app">
@@ -1083,6 +1262,19 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <div class="toast" id="toast"></div>
 
 <script>
+  // ── PHASE 3: Feedback form ────────────────────────────────────────────────
+function p3SelectType(el) {
+  document.querySelectorAll('.p3-type-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+function p3HandleSubmit(btn) {
+  btn.textContent = '✓  Sent — thank you';
+  btn.style.background = '#161616';
+  btn.style.color = '#dfff00';
+  btn.style.border = '1px solid rgba(223,255,0,0.3)';
+  btn.style.boxShadow = 'none';
+  btn.disabled = true;
+}
 // ─── SUPABASE ─────────────────────────────────────────────────────────────────
 const SUPA_URL = 'https://eqzcdcdnddjufuwmwbml.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxemNkY2RuZGRqdWZ1d213Ym1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTM1NzEsImV4cCI6MjA4OTg2OTU3MX0.cGBJxtuReOrU7_jz6Na-zhgR92nGIYJVgno22vqjqDA';
