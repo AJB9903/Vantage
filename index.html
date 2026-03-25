@@ -21,23 +21,36 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 
 
-/* AUTH */
+/* ── AUTH ──────────────────────────────────────────────────────────── */
 #auth-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1000;padding:24px}
-.auth-box{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:40px;width:100%;max-width:400px;box-shadow:0 0 40px rgba(223,255,0,0.05)}
-.auth-logo{font-size:2.5rem;font-weight:800;letter-spacing:-2px;margin-bottom:6px;text-align:center}
+.auth-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:420px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 24px 64px rgba(0,0,0,.6)}
+.auth-header{padding:32px 36px 24px;border-bottom:1px solid var(--border)}
+.auth-wordmark{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.auth-logo{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;letter-spacing:-1.5px;color:var(--text);line-height:1;margin-bottom:4px}
 .auth-logo span{color:var(--accent)}
-.auth-sub{font-size:0.7rem;color:var(--accent);font-family:'Space Mono',monospace;margin-bottom:32px;text-align:center;text-transform:uppercase;letter-spacing:2px}
-.auth-tabs{display:flex;gap:6px;margin-bottom:24px}
-.auth-tab{flex:1;padding:9px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all .15s}
-.auth-tab.active{background:var(--accent);border-color:var(--accent);color:#000}
-.auth-field{margin-bottom:14px}
-.auth-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:6px;display:block;font-weight:700}
-.inp{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:11px 14px;color:var(--text);font-family:'Syne',sans-serif;font-size:0.9rem;width:100%;outline:none;transition:border-color .15s}
-.inp:focus{border-color:var(--accent)}
-.auth-btn{width:100%;background:var(--accent);color:#000;border:none;border-radius:8px;padding:13px;font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;margin-top:8px;transition:all .15s}
-.auth-btn:hover{background:#cce800;transform:translateY(-1px)}
-.auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-.auth-err{color:var(--red);font-size:0.75rem;margin-top:10px;font-family:'Space Mono',monospace;min-height:18px}
+.auth-tagline{font-family:'Space Mono',monospace;font-size:0.55rem;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border)}
+.auth-tab{flex:1;padding:14px;border:none;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-family:'Space Mono',monospace;font-size:0.58rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-bottom:-1px}
+.auth-tab:hover{color:var(--text)}
+.auth-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.auth-body{padding:28px 36px 32px}
+.auth-forgot-info{background:rgba(223,255,0,.04);border:1px solid rgba(223,255,0,.15);border-radius:8px;padding:12px 14px;margin-bottom:20px;display:none}
+.auth-forgot-info-text{font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:.5px;line-height:1.7}
+.auth-field{margin-bottom:16px}
+.auth-label{font-size:0.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:8px;display:block;font-weight:700}
+.inp{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'Syne',sans-serif;font-size:0.9rem;width:100%;outline:none;transition:border-color .15s,box-shadow .15s}
+.inp:focus{border-color:rgba(223,255,0,.5);box-shadow:0 0 0 3px rgba(223,255,0,.06)}
+.auth-forgot{display:block;text-align:right;font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;margin-top:8px;transition:color .15s;user-select:none}
+.auth-forgot:hover{color:var(--accent)}
+.auth-btn{width:100%;background:var(--accent);color:#000;border:none;border-radius:10px;padding:15px;font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:800;cursor:pointer;margin-top:20px;transition:background .15s,transform .15s,box-shadow .15s;letter-spacing:-.3px;box-shadow:0 4px 20px rgba(223,255,0,.15)}
+.auth-btn:hover{background:#e8ff2a;transform:translateY(-1px);box-shadow:0 6px 28px rgba(223,255,0,.25)}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.auth-back{display:none;text-align:center;font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);cursor:pointer;margin-top:14px;transition:color .15s;user-select:none}
+.auth-back:hover{color:var(--text)}
+.auth-err{color:var(--red);font-size:0.7rem;margin-top:12px;font-family:'Space Mono',monospace;min-height:18px;letter-spacing:.5px}
+
+</div>
+</div>
 /* APP LAYOUT */
 #app{display:none;grid-template-columns:240px 1fr;min-height:100vh;position:relative;z-index:1}
 #app.visible{display:grid}
@@ -178,7 +191,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 /* AUTO SAVE INDICATOR */
 .save-status{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);opacity:0;transition:opacity 0.3s}
 .save-status.visible{opacity:1}
-.save-status.success{color:var(--green)}
+.save-status.success{color:var(--accent)}
 /* HEATMAP & CHARTS */
 .heatmap-wrap{overflow-x:auto}
 .heatmap-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
@@ -566,28 +579,39 @@ textarea.p3-inp{min-height:110px;resize:vertical;line-height:1.6}
 <body>
 <div id="auth-screen">
   <div class="auth-box">
-    <div class="auth-logo">VANTAGE<span>.</span></div>
-    <div class="auth-sub">Strategic Objective Tracker</div>
+    <div class="auth-header">
+      <div class="auth-wordmark">Personal Execution OS</div>
+      <div class="auth-logo">VANTAGE<span>.</span></div>
+      <div class="auth-tagline">Strategic Command Interface</div>
+    </div>
     <div class="auth-tabs">
       <button class="auth-tab active" onclick="switchAuthTab('login')">Sign In</button>
       <button class="auth-tab" onclick="switchAuthTab('signup')">Create Account</button>
     </div>
-    <div class="auth-field">
-      <label class="auth-label">Email</label>
-      <input type="email" class="inp" id="auth-email" placeholder="you@email.com"/>
+    <div class="auth-body">
+      <div class="auth-forgot-info" id="auth-forgot-info">
+        <div class="auth-forgot-info-text">Enter your email and we'll send you a link to reset your password.</div>
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">Email</label>
+        <input type="email" class="inp" id="auth-email" placeholder="you@email.com"/>
+      </div>
+      <div class="auth-field" id="auth-password-field">
+        <label class="auth-label">Password</label>
+        <input type="password" class="inp" id="auth-password" placeholder="••••••••"/>
+        <span class="auth-forgot" onclick="switchAuthTab('forgot')">Forgot password?</span>
+      </div>
+      <div class="auth-field" id="confirm-field" style="display:none">
+        <label class="auth-label">Confirm Password</label>
+        <input type="password" class="inp" id="auth-confirm" placeholder="••••••••"/>
+      </div>
+      <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
+      <span class="auth-back" id="auth-back-link" onclick="switchAuthTab('login')">← Back to Sign In</span>
+      <div class="auth-err" id="auth-err"></div>
     </div>
-    <div class="auth-field">
-      <label class="auth-label">Password</label>
-      <input type="password" class="inp" id="auth-password" placeholder="••••••••"/>
-    </div>
-    <div class="auth-field" id="confirm-field" style="display:none">
-      <label class="auth-label">Confirm Password</label>
-      <input type="password" class="inp" id="auth-confirm" placeholder="••••••••"/>
-    </div>
-    <button class="auth-btn" id="auth-submit-btn" onclick="handleAuth()">Sign In</button>
-    <div class="auth-err" id="auth-err"></div>
   </div>
 </div>
+
 <div id="paywall-screen" style="display:flex">
   <nav class="hero-nav">
     <div class="hero-logo">VANTAGE<span>.</span></div>
@@ -1416,9 +1440,13 @@ function switchAuthTab(mode) {
   authMode = mode;
   document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active',(i===0&&mode==='login')||(i===1&&mode==='signup')));
   document.getElementById('confirm-field').style.display = mode==='signup'?'block':'none';
-  document.getElementById('auth-submit-btn').textContent = mode==='login'?'Sign In':'Create Account';
+  document.getElementById('auth-password-field').style.display = mode==='forgot'?'none':'block';
+  document.getElementById('auth-forgot-info').style.display = mode==='forgot'?'block':'none';
+  document.getElementById('auth-back-link').style.display = mode==='forgot'?'block':'none';
+  document.getElementById('auth-submit-btn').textContent = mode==='login'?'Sign In':mode==='signup'?'Create Account':'Send Recovery Link';
   document.getElementById('auth-err').textContent = '';
 }
+
 async function handleAuth() {
   const email = document.getElementById('auth-email').value.trim();
   const pw = document.getElementById('auth-password').value;
@@ -1426,6 +1454,18 @@ async function handleAuth() {
   const btn = document.getElementById('auth-submit-btn');
   const err = document.getElementById('auth-err');
   err.textContent = '';
+  if (authMode==='forgot') {
+    if (!email) { err.textContent='Email required.'; return; }
+    btn.disabled=true; btn.innerHTML='<span class="spinner"></span>Sending...';
+    try {
+      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+      if (error) throw error;
+      err.style.color='var(--green)'; err.textContent='Recovery link sent — check your email.';
+    } catch(e) { err.style.color='var(--red)'; err.textContent=e.message||'Something went wrong.'; }
+    btn.disabled=false; btn.textContent='Send Recovery Link';
+    return;
+  }
+
   if (!email||!pw) { err.textContent='Email and password required.'; return; }
   if (authMode==='signup'&&pw!==confirm) { err.textContent='Passwords do not match.'; return; }
   if (authMode==='signup'&&pw.length<6) { err.textContent='Password must be at least 6 characters.'; return; }
@@ -1600,7 +1640,7 @@ function renderHabitList(dk) {
   const score = calcDailyScore(dk);
   const scoreEl = document.getElementById('score-display');
   if (scoreEl) {
-    const c = score>=80?'var(--green)':score>=50?'var(--yellow)':'var(--red)';
+    const c = score>=80?'var(--accent)':score>=50?'var(--yellow)':'var(--red)';
     scoreEl.style.color = c;
     scoreEl.textContent = score + '% execution';
   }
