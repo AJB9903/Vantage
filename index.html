@@ -547,7 +547,19 @@ textarea.p3-inp{min-height:110px;resize:vertical;line-height:1.6}
   .p3-submit-btn{width:100%;justify-content:center}
   .p3-footer{padding:20px;flex-direction:column;align-items:flex-start;gap:10px}
   .p3-feedback{padding:56px 20px}
-  .p3-about{padding:56px 20px 80px}
+ .p3-about{padding:56px 20px 80px}
+}
+/* ── BUG FIXES ───────────────────────────────────────── */
+.hero-proof{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:flex-start}
+.p2-divider,.p2-features,.p2-checkout,.p3-beta-banner,.p3-feedback,.p3-about,.p3-footer{flex-shrink:0;width:100%;position:relative;z-index:2}
+#paywall-screen>*{min-height:unset;height:auto}
+.p2-checkout{padding-bottom:100px}
+.p3-feedback{padding-top:80px;padding-bottom:80px}
+.p3-about{padding-top:80px;padding-bottom:100px}
+@media(max-width:768px){
+  .hero-proof{justify-content:center}
+  .hero-body{overflow:visible;min-height:unset}
+  .p2-block,.p2-checkout,.p3-beta-inner,.p3-feedback-inner,.p3-about-inner{width:100%;max-width:100%;padding-left:20px;padding-right:20px}
 }
 </style>
 </head>
