@@ -373,6 +373,88 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 @media(max-width:400px){
   .hero-float-score,.hero-float-streak{display:none}
 }
+  /* ── P2 DIVIDER ──────────────────────────────────────────────────── */
+.p2-divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);position:relative}
+.p2-divider::after{content:'↓ scroll to explore';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Space Mono',monospace;font-size:0.52rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);background:var(--surface);padding:0 16px;white-space:nowrap}
+/* ── P2 FEATURE SECTION ──────────────────────────────────────────── */
+.p2-features{background:var(--surface);padding:0 0 80px;position:relative;z-index:2}
+.p2-section-label{text-align:center;padding:72px 20px 56px}
+.p2-eyebrow{display:inline-flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.p2-eyebrow::before,.p2-eyebrow::after{content:'';width:32px;height:1px;background:var(--accent);opacity:.4}
+.p2-section-title{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-1.5px;color:var(--text);line-height:1.1;margin-bottom:14px}
+.p2-section-title span{color:var(--accent)}
+.p2-section-sub{font-size:.9rem;color:var(--muted);max-width:480px;margin:0 auto;line-height:1.7}
+.p2-block{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:0;max-width:1100px;margin:0 auto;border-top:1px solid var(--border);padding:72px 40px}
+.p2-block:last-of-type{border-bottom:1px solid var(--border)}
+.p2-block.flip{direction:rtl}
+.p2-block.flip>*{direction:ltr}
+.p2-img-col{display:flex;justify-content:center;align-items:center;padding:0 32px}
+.p2-screen-placeholder{width:100%;max-width:440px;aspect-ratio:16/10;background:var(--surface2);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;position:relative;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.5);transition:transform .3s,box-shadow .3s}
+.p2-screen-placeholder:hover{transform:translateY(-4px);box-shadow:0 32px 80px rgba(0,0,0,.6)}
+.p2-screen-placeholder::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:32px 32px}
+.p2-screen-placeholder::after{content:'';position:absolute;inset:0;border-radius:14px;border:1px solid rgba(255,255,255,.05);pointer-events:none}
+.p2-placeholder-icon{font-size:2rem;position:relative;z-index:2}
+.p2-placeholder-label{font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted);opacity:.5;position:relative;z-index:2}
+.p2-screen-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;z-index:3}
+.p2-text-col{padding:0 32px;display:flex;flex-direction:column;gap:0}
+.p2-block-num{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.p2-block-num::after{content:'';flex:1;height:1px;background:var(--border);max-width:40px}
+.p2-block-tag{display:inline-flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:4px;margin-bottom:20px;width:fit-content;font-weight:700}
+.p2-block-tag.yellow{background:rgba(223,255,0,.08);color:var(--accent);border:1px solid rgba(223,255,0,.2)}
+.p2-block-tag.green{background:rgba(91,154,120,.08);color:#7EC49E;border:1px solid rgba(91,154,120,.2)}
+.p2-block-tag.blue{background:rgba(56,189,248,.08);color:#38bdf8;border:1px solid rgba(56,189,248,.2)}
+.p2-block-title{font-family:'Syne',sans-serif;font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:800;letter-spacing:-1.5px;line-height:1.05;color:var(--text);margin-bottom:16px}
+.p2-block-body{font-size:0.93rem;line-height:1.75;color:var(--muted);margin-bottom:28px;max-width:400px}
+.p2-feature-pills{display:flex;flex-wrap:wrap;gap:8px}
+.p2-pill{display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:1px;text-transform:uppercase;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:6px 12px}
+.p2-pill-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+/* ── P2 CHECKOUT ─────────────────────────────────────────────────── */
+.p2-checkout{background:var(--surface);padding:80px 24px 100px;position:relative;overflow:hidden}
+.p2-checkout::before{content:'';position:absolute;bottom:-30%;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(223,255,0,.05) 0%,transparent 70%);pointer-events:none}
+.p2-checkout-inner{max-width:520px;margin:0 auto;position:relative;z-index:2}
+.p2-checkout-header{text-align:center;margin-bottom:40px}
+.p2-checkout-eyebrow{font-family:'Space Mono',monospace;font-size:0.58rem;letter-spacing:4px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+.p2-checkout-title{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:800;letter-spacing:-1.5px;color:var(--text);line-height:1.1}
+.p2-card{background:#0d0d0d;border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.03),0 40px 80px rgba(0,0,0,.6)}
+.p2-card-accent-bar{height:3px;background:linear-gradient(90deg,var(--accent),rgba(223,255,0,.3))}
+.p2-card-body{padding:36px 36px 28px}
+.p2-trust-row{display:flex;align-items:center;gap:10px;margin-bottom:28px;flex-wrap:wrap}
+.p2-trust-badge{display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:0.52rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:5px 10px}
+.p2-trust-badge svg{opacity:.6;flex-shrink:0}
+.p2-price-row{display:flex;align-items:flex-end;gap:12px;margin-bottom:8px}
+.p2-price{font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;letter-spacing:-3px;color:var(--text);line-height:1}
+.p2-price-meta{display:flex;flex-direction:column;gap:3px;padding-bottom:8px}
+.p2-price-cross{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--muted);text-decoration:line-through;letter-spacing:1px}
+.p2-price-label{font-family:'Space Mono',monospace;font-size:0.62rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);font-weight:700}
+.p2-price-sub{font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:28px}
+.p2-card-hr{height:1px;background:var(--border);margin-bottom:24px}
+.p2-includes-label{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
+.p2-include-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.p2-include-item{display:flex;align-items:flex-start;gap:12px}
+.p2-include-check{width:18px;height:18px;border-radius:5px;background:rgba(223,255,0,.1);border:1px solid rgba(223,255,0,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.p2-include-check svg{color:var(--accent)}
+.p2-include-name{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:var(--text);line-height:1.3}
+.p2-include-desc{font-family:'Space Mono',monospace;font-size:.58rem;color:var(--muted);letter-spacing:.5px;margin-top:2px}
+.p2-buy-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--accent);color:#000;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;letter-spacing:-.3px;padding:17px 24px;border-radius:12px;text-decoration:none;border:none;cursor:pointer;transition:background .18s,transform .18s,box-shadow .18s;box-shadow:0 4px 24px rgba(223,255,0,.2),inset 0 1px 0 rgba(255,255,255,.15);margin-bottom:16px}
+.p2-buy-btn:hover{background:#e8ff2a;transform:translateY(-2px);box-shadow:0 8px 36px rgba(223,255,0,.3),inset 0 1px 0 rgba(255,255,255,.2)}
+.p2-buy-btn svg{flex-shrink:0;transition:transform .2s}
+.p2-buy-btn:hover svg{transform:translateX(3px)}
+.p2-secure-row{display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);opacity:.7}
+.p2-card-footer{padding:16px 36px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.p2-footer-item{display:flex;align-items:center;gap:6px;font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);opacity:.6}
+.p2-operator-link{text-align:center;margin-top:28px;font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--border);cursor:pointer;transition:color .2s;user-select:none}
+.p2-operator-link:hover{color:var(--muted)}
+@media(max-width:768px){
+  .p2-block{grid-template-columns:1fr;padding:56px 20px;gap:36px}
+  .p2-block.flip{direction:ltr}
+  .p2-img-col,.p2-text-col{padding:0}
+  .p2-section-label{padding:56px 20px 40px}
+  .p2-card-body{padding:28px 24px 20px}
+  .p2-card-footer{padding:16px 24px;flex-direction:column;align-items:flex-start;gap:10px}
+  .p2-price{font-size:3rem}
+  .p2-checkout{padding:56px 16px 80px}
+  .p2-trust-row{gap:6px}
+}
 </style>
 </head>
 <body>
@@ -449,6 +531,123 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       </div>
     </div>
   </div>
+  <!-- PHASE 2: DIVIDER + FEATURES + CHECKOUT -->
+<div class="p2-divider"></div>
+
+<section class="p2-features">
+  <div class="p2-section-label">
+    <div class="p2-eyebrow">Everything you need</div>
+    <h2 class="p2-section-title">Built for people who<br>take their goals <span>seriously.</span></h2>
+    <p class="p2-section-sub">Three core systems. One dashboard. Total clarity on where you stand, every single day.</p>
+  </div>
+
+  <div class="p2-block">
+    <div class="p2-img-col">
+      <div class="p2-screen-placeholder">
+        <div class="p2-screen-bar" style="background:linear-gradient(90deg,var(--accent),rgba(223,255,0,0.3))"></div>
+        <div class="p2-placeholder-icon">⚡</div>
+        <div class="p2-placeholder-label">Your UI screenshot here</div>
+      </div>
+    </div>
+    <div class="p2-text-col">
+      <div class="p2-block-num">01 / 03</div>
+      <div class="p2-block-tag yellow">The Foundation</div>
+      <h3 class="p2-block-title">Your daily habits,<br>finally under control.</h3>
+      <p class="p2-block-body">Log your habits in seconds. Assign stake levels — low, medium, high, or critical — so the system knows what actually matters. Your execution score updates in real time.</p>
+      <div class="p2-feature-pills">
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:var(--accent)"></span>Stake-weighted scoring</div>
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:var(--accent)"></span>1-tap check-in</div>
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:var(--accent)"></span>Zero friction logging</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p2-block flip">
+    <div class="p2-img-col">
+      <div class="p2-screen-placeholder">
+        <div class="p2-screen-bar" style="background:linear-gradient(90deg,#5B9A78,rgba(91,154,120,0.3))"></div>
+        <div class="p2-placeholder-icon">🧠</div>
+        <div class="p2-placeholder-label">Your UI screenshot here</div>
+      </div>
+    </div>
+    <div class="p2-text-col">
+      <div class="p2-block-num">02 / 03</div>
+      <div class="p2-block-tag green">The Differentiator</div>
+      <h3 class="p2-block-title">An AI coach that<br>tells you the truth.</h3>
+      <p class="p2-block-body">Every morning, Vantage generates a personalized briefing based on your data — your mood, your habits, your friction points. It spots patterns you miss and calls out the gaps before they become excuses.</p>
+      <div class="p2-feature-pills">
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:#5B9A78"></span>Daily AI briefing</div>
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:#5B9A78"></span>Root friction analysis</div>
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:#5B9A78"></span>Accountability prompts</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="p2-block">
+    <div class="p2-img-col">
+      <div class="p2-screen-placeholder">
+        <div class="p2-screen-bar" style="background:linear-gradient(90deg,#38bdf8,rgba(56,189,248,0.3))"></div>
+        <div class="p2-placeholder-icon">📊</div>
+        <div class="p2-placeholder-label">Your UI screenshot here</div>
+      </div>
+    </div>
+    <div class="p2-text-col">
+      <div class="p2-block-num">03 / 03</div>
+      <div class="p2-block-tag blue">The Result</div>
+      <h3 class="p2-block-title">See your trajectory,<br>not just today.</h3>
+      <p class="p2-block-body">Weekly and monthly recaps surface your real performance data — habit heatmaps, mood trends, body metrics, and goal completion rates. Know exactly if you're compounding or slipping.</p>
+      <div class="p2-feature-pills">
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:#38bdf8"></span>Habit heatmaps</div>
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:#38bdf8"></span>Mood & body trends</div>
+        <div class="p2-pill"><span class="p2-pill-dot" style="background:#38bdf8"></span>Monthly audit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="p2-checkout">
+  <div class="p2-checkout-inner">
+    <div class="p2-checkout-header">
+      <div class="p2-checkout-eyebrow">Ready to start</div>
+      <h2 class="p2-checkout-title">One payment.<br>Lifetime access.</h2>
+    </div>
+    <div class="p2-card">
+      <div class="p2-card-accent-bar"></div>
+      <div class="p2-card-body">
+        <div class="p2-trust-row">
+          <div class="p2-trust-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Secured by Stripe</div>
+          <div class="p2-trust-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>No subscription</div>
+          <div class="p2-trust-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Instant access</div>
+        </div>
+        <div class="p2-price-row">
+          <div class="p2-price">$6.99</div>
+          <div class="p2-price-meta"><span class="p2-price-cross">$29.99</span><span class="p2-price-label">Founder price</span></div>
+        </div>
+        <div class="p2-price-sub">One-time · No recurring charges · Yours forever</div>
+        <div class="p2-card-hr"></div>
+        <div class="p2-includes-label">What's included</div>
+        <div class="p2-include-list">
+          <div class="p2-include-item"><div class="p2-include-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="p2-include-text"><div class="p2-include-name">Full App Access</div><div class="p2-include-desc">All 5 modules — Today, Month, Calendar, Wins, Settings</div></div></div>
+          <div class="p2-include-item"><div class="p2-include-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="p2-include-text"><div class="p2-include-name">Daily Logs</div><div class="p2-include-desc">Habit tracking, mood, weight, calories, protein, sleep</div></div></div>
+          <div class="p2-include-item"><div class="p2-include-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="p2-include-text"><div class="p2-include-name">AI Coach</div><div class="p2-include-desc">Personalized daily briefings, friction analysis, accountability prompts</div></div></div>
+          <div class="p2-include-item"><div class="p2-include-check"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="p2-include-text"><div class="p2-include-name">Monthly Reviews</div><div class="p2-include-desc">Heatmaps, trend charts, goal audits, and performance scoring</div></div></div>
+        </div>
+        <a href="https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00" class="p2-buy-btn">
+          Get Lifetime Access — $6.99
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <div class="p2-secure-row"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>256-bit SSL · Stripe-secured · No card stored</div>
+      </div>
+      <div class="p2-card-footer">
+        <div class="p2-footer-item"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Secure checkout</div>
+        <div class="p2-footer-item"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Powered by Stripe</div>
+        <div class="p2-footer-item"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>No subscription ever</div>
+      </div>
+    </div>
+    <div class="p2-operator-link" onclick="operatorLogin()">Operator access</div>
+  </div>
+</section>
+<!-- END PHASE 2 -->
 </div>
 
 <div id="app">
