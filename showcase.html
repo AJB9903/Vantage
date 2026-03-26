@@ -575,7 +575,6 @@ textarea.p3-inp{min-height:110px;resize:vertical;line-height:1.6}
           <div class="p3-field"><label class="p3-label">Your name</label><input type="text" class="p3-inp" placeholder="First name is fine"/></div>
           <div class="p3-field"><label class="p3-label">Email (optional)</label><input type="email" class="p3-inp" placeholder="For a reply"/></div>
         </div>
-        <div class="p3-field"><label class="p3-label">Subject</label><input type="text" class="p3-inp" placeholder="One line summary"/></div>
         <div class="p3-field"><label class="p3-label">Details</label><textarea class="p3-inp" placeholder="Describe what happened, what you expected, or what you'd love to see built…"></textarea></div>
         <div class="p3-submit-row">
           <div class="p3-submit-note">Responses within 48 hrs<br>for anything urgent</div>
@@ -674,13 +673,45 @@ function p3SelectType(el) {
   el.classList.add('active');
 }
 
-function p3HandleSubmit(btn) {
-  btn.textContent = '✓  Sent — thank you';
-  btn.style.background = '#161616';
-  btn.style.color = '#dfff00';
-  btn.style.border = '1px solid rgba(223,255,0,0.3)';
-  btn.style.boxShadow = 'none';
+async function p3HandleSubmit(btn) {
+  // Grab the data
+  const type = document.querySelector('.p3-type-btn.active').textContent.trim();
+  const inputs = document.querySelectorAll('.p3-inp');
+  const name = inputs[0].value.trim();
+  const email = inputs[1].value.trim();
+  const details = inputs[2].value.trim(); // Now index 2 since Subject is gone
+
+  if (!details) {
+    inputs[2].style.borderColor = 'var(--red)';
+    return;
+  }
+
+  // UI Loading State
+  const originalText = btn.innerHTML;
+  btn.innerHTML = 'Sending...';
   btn.disabled = true;
+
+  try {
+    // Send to Supabase (Ensure you create a 'feedback' table in Supabase with these columns)
+    await sb.from('feedback').insert([{ 
+      type: type, 
+      name: name || 'Anonymous', 
+      email: email || 'No email', 
+      details: details 
+    }]);
+
+    // Success State
+    btn.textContent = '✓ Sent — thank you';
+    btn.style.background = '#161616';
+    btn.style.color = '#dfff00';
+    btn.style.border = '1px solid rgba(223,255,0,0.3)';
+    btn.style.boxShadow = 'none';
+  } catch (error) {
+    console.error(error);
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+    alert('Failed to send feedback. Please try again.');
+  }
 }
 </script>
 </body>
