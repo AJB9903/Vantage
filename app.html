@@ -270,6 +270,53 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
 .review-ai-label { font-size: 0.55rem; text-transform: uppercase; letter-spacing: 3px; color: var(--accent); font-family: 'Space Mono', monospace; margin-bottom: 12px; font-weight: 700; }
 .failure-banner { background: rgba(248,113,113,0.05); border: 1px solid var(--red); border-left: 4px solid var(--red); border-radius: 2px; padding: 16px 24px; font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--red); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px; }
 
+/* FRICTION ALERT - MODULE 1 */
+.friction-alert { background: rgba(248,113,113,0.06); border: 1px solid var(--red); border-left: 4px solid var(--red); border-radius: var(--radius-sm); padding: 24px 28px; margin-bottom: 24px; }
+.friction-alert-header { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--red); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.friction-alert-body { font-size: 0.85rem; color: var(--text); line-height: 1.7; margin-bottom: 0; }
+/* Dim all page-today content except the friction alert when locked */
+.today-locked .grid.g4,
+.today-locked .today-grid,
+.today-locked .card:not(#output-ledger-card),
+.today-locked #weekly-goals-card,
+.today-locked #wnn-card,
+.today-locked .briefing-box { pointer-events: none !important; opacity: 0.18 !important; user-select: none; }
+.today-locked #friction-alert { pointer-events: all !important; opacity: 1 !important; }
+
+/* OUTPUT LEDGER - MODULE 1 */
+.output-ledger-card { border-color: rgba(223,255,0,0.15); }
+.output-ledger-required { border-color: var(--red) !important; }
+
+/* FOUNDING BADGE - MODULE 3 */
+.founding-badge { background: rgba(223,255,0,0.04); border: 1px solid rgba(223,255,0,0.2); border-radius: var(--radius-sm); padding: 14px 20px; text-align: right; flex-shrink: 0; }
+.founding-badge-label { font-size: 0.48rem; font-family: 'Space Mono', monospace; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+.founding-badge-value { font-size: 0.75rem; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--accent); letter-spacing: 1px; }
+.founding-badge-sub { font-size: 0.5rem; font-family: 'Space Mono', monospace; color: var(--muted); letter-spacing: 1px; margin-top: 4px; text-transform: uppercase; }
+
+/* WEIGHT EDITOR - MODULE 3 */
+.weight-edit-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; padding: 14px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.weight-edit-label { display: flex; align-items: center; gap: 10px; min-width: 60px; }
+.weight-edit-desc { flex: 1; font-size: 0.65rem; font-family: 'Space Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.weight-edit-input { width: 76px; text-align: center; font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.85rem; }
+.weight-edit-unit { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 1px; }
+
+/* 28-DAY CONSISTENCY MATRIX - MODULE 2 */
+.matrix-28 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.matrix-28-header { text-align: center; font-size: 0.48rem; font-family: 'Space Mono', monospace; color: var(--muted); padding: 4px 0; letter-spacing: 1px; text-transform: uppercase; }
+.matrix-28-cell { aspect-ratio: 1; border-radius: 3px; position: relative; cursor: default; transition: transform 0.1s; border: 1px solid var(--border); }
+.matrix-28-cell:hover { transform: scale(1.1); z-index: 2; }
+.matrix-28-date { position: absolute; bottom: 3px; left: 4px; font-size: 0.42rem; font-family: 'Space Mono', monospace; color: rgba(255,255,255,0.4); line-height: 1; }
+
+/* DELUSION GAP - MODULE 2 */
+.delusion-gap-wrap { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.delusion-gap-metric { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 180px; }
+.delusion-gap-val { font-family: 'Space Mono', monospace; font-size: 1.8rem; font-weight: 700; letter-spacing: -1px; line-height: 1; min-width: 70px; }
+.delusion-gap-sub { font-size: 0.55rem; font-family: 'Space Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 1.5px; line-height: 1.8; }
+.delusion-verdict { flex: 1; min-width: 200px; background: rgba(248,113,113,0.06); border: 1px solid var(--red); border-left: 4px solid var(--red); border-radius: 2px; padding: 14px 18px; font-size: 0.7rem; line-height: 1.7; color: var(--red); font-family: 'Space Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase; }
+.delusion-clear { flex: 1; min-width: 200px; background: rgba(74,222,128,0.04); border: 1px solid rgba(74,222,128,0.2); border-radius: 2px; padding: 14px 18px; font-size: 0.65rem; line-height: 1.7; color: var(--green); font-family: 'Space Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase; }
+
+/* TOAST & UTILS */
+  
 /* TOAST & UTILS */
 .toast { position: fixed; bottom: 32px; right: 32px; background: var(--accent); color: #000; padding: 14px 24px; border-radius: 2px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; z-index: 9999; transform: translateY(100px); transition: transform 0.3s; font-family: 'Space Mono', monospace; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
 .toast.show { transform: translateY(0); }
@@ -336,7 +383,7 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
       <div class="nav-item" onclick="showPage('month')" id="nav-month"><span class="nav-icon">◈</span> Month</div>
       <div class="nav-item" onclick="showPage('calendar')" id="nav-calendar"><span class="nav-icon">◎</span> Calendar</div>
       <div class="nav-item" onclick="showPage('wins')" id="nav-wins"><span class="nav-icon">◇</span> Wins</div>
-      <div class="nav-item" onclick="showPage('settings')" id="nav-settings"><span class="nav-icon">◉</span> Settings</div>
+      <div class="nav-item" onclick="showPage('settings')" id="nav-settings"><span class="nav-icon">◉</span> Systems</div>
       <div class="nav-item" onclick="showPage('feedback')" id="nav-feedback"><span class="nav-icon">⌗</span> Feedback</div>
     </nav>
     <div class="sidebar-footer">
@@ -369,6 +416,16 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
         <div>
           <div class="breach-banner-title">System Breach Detected</div>
           <div class="breach-banner-sub" id="breach-list"></div>
+        </div>
+      </div>
+
+      <div class="friction-alert" id="friction-alert" style="display:none">
+        <div class="friction-alert-header">[System Lockdown] Sub-50% execution detected. Two consecutive days.</div>
+        <div class="friction-alert-body">You are in structural failure. The metrics below are locked. Define your primary breach before accessing today's inputs. Vague entries will not be accepted.</div>
+        <div style="margin-top:20px">
+          <label class="card-label" style="display:block;margin-bottom:10px">Primary Structural Failure</label>
+          <textarea class="inp" id="friction-failure-input" placeholder="Identify the specific structural pattern responsible for this failure. Minimum 25 characters." style="min-height:90px;resize:vertical;line-height:1.7;border-color:var(--red);" oninput="checkFrictionUnlock()"></textarea>
+          <button class="analyze-btn" id="friction-unlock-btn" onclick="unlockFrictionAlert()" style="margin-top:12px;border-color:var(--red);color:var(--red);opacity:0.5;" disabled>Submit Failure Analysis to Unlock</button>
         </div>
       </div>
 
@@ -411,6 +468,15 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
         <div class="habit-list" id="wnn-list"></div>
       </div>
 
+      <div class="card section-gap output-ledger-card" id="output-ledger-card">
+        <div class="card-label" style="margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+          Output Ledger
+          <span style="font-size:0.48rem;font-family:'Space Mono',monospace;color:var(--red);letter-spacing:2px;text-transform:uppercase;border:1px solid rgba(248,113,113,0.3);padding:3px 8px;border-radius:2px;">Required. AI Cross-Referenced.</span>
+        </div>
+        <p style="font-size:0.7rem;color:var(--muted);margin-bottom:12px;line-height:1.6;font-family:'Space Mono',monospace;letter-spacing:0.5px;text-transform:uppercase;">What did you actually produce today? Not effort. Not tasks. Tangible, verifiable output.</p>
+        <textarea class="inp" id="inp-output" placeholder="Ex: Completed client proposal draft (3,200 words). Shipped feature X to staging. Closed 2 deals at $4k each. Be specific." style="min-height:90px;resize:vertical;line-height:1.8;" oninput="saveOutputLedger()"></textarea>
+      </div>
+
       <div class="card section-gap">
         <div class="card-label" style="margin-bottom:16px">End of Day Log</div>
         <button class="voice-btn" id="voice-btn" onclick="toggleVoice()"><span id="voice-icon">[ REC ]</span> <span id="voice-label">Initiate Voice Protocol</span></button>
@@ -434,7 +500,17 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
         <div class="card"><div class="card-label" style="margin-bottom:16px">Mood Variance</div><div class="mood-chart" id="month-mood-chart"></div></div>
         <div class="card"><div class="card-label" style="margin-bottom:16px">Mass Correlation</div><svg style="width:100%;overflow:visible" viewBox="0 0 300 70" id="weight-svg"></svg></div>
       </div>
-      <div class="card section-gap"><div class="card-label" style="margin-bottom:20px">Consistency Matrix</div><div class="heatmap-wrap" id="month-heatmap"></div></div>
+      <div class="card section-gap" id="delusion-gap-card">
+        <div class="card-label" style="margin-bottom:16px">Delusion Gap</div>
+        <p style="font-size:0.65rem;color:var(--muted);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Habit completion rate vs. goal progress rate. A gap above 25% signals busy-work masquerading as execution.</p>
+        <div id="delusion-gap-content"><span style="font-size:0.75rem;color:var(--muted);font-family:'Space Mono',monospace">Calculating...</span></div>
+      </div>
+
+      <div class="card section-gap">
+        <div class="card-label" style="margin-bottom:20px">28-Day Consistency Matrix</div>
+        <p style="font-size:0.6rem;color:var(--muted);font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Rolling 28-day horizon. Cell brightness scales with weighted System Score for that day.</p>
+        <div id="month-heatmap"></div>
+      </div>
       <div class="grid g2 section-gap">
         <div class="card"><div class="card-label" style="margin-bottom:16px">Caloric Intake</div><div id="cal-bars"></div></div>
         <div class="card"><div class="card-label" style="margin-bottom:16px">Protein Index</div><div id="prot-bars"></div></div>
@@ -487,7 +563,12 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
 
     <div class="page" id="page-settings">
       <div class="page-header">
-        <div><div class="page-title">System<span>.</span></div><div class="page-sub">Configuration Parameters</div></div>
+        <div><div class="page-title">Systems<span>.</span></div><div class="page-sub">Configuration Parameters</div></div>
+        <div class="founding-badge">
+          <div class="founding-badge-label">Operator Status</div>
+          <div class="founding-badge-value">Founding Operator</div>
+          <div class="founding-badge-sub">Grandfathered rate. Perpetual access.</div>
+        </div>
       </div>
       <div class="settings-section">
         <div class="settings-title">Active Timeframe</div>
@@ -504,18 +585,18 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
       </div>
       
       <div class="settings-section">
-        <div class="settings-title">Habit Weights</div>
-        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:20px;line-height:1.7;">Establish load bearing capacity. High weights dictate your core execution score.</p>
-        <table class="stakes-matrix">
-          <tr><th>Classification</th><th>Multiplier</th><th>Requirement</th></tr>
-          <tr><td><span class="stake-tag stake-low">LOW</span></td><td style="color:var(--muted)">0.5x</td><td style="color:var(--muted)">Standard maintenance.</td></tr>
-          <tr><td><span class="stake-tag stake-med">MED</span></td><td style="color:var(--blue)">1.0x</td><td style="color:var(--muted)">Core baseline.</td></tr>
-          <tr><td><span class="stake-tag stake-high">HIGH</span></td><td style="color:#fb923c">3.0x</td><td style="color:var(--muted)">Strategic necessity.</td></tr>
-          <tr><td><span class="stake-tag stake-crit">CRIT</span></td><td style="color:var(--red)">3.0x</td><td style="color:var(--muted)">Non-negotiable anchor.</td></tr>
-        </table>
+        <div class="settings-title">Habit Weight Multipliers</div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:20px;line-height:1.7;">These multipliers govern your weighted System Score. CRIT and HIGH failures carry the most execution cost. Adjust with intent.</p>
+        <div id="weight-editor" style="margin-bottom:20px"></div>
+        <button class="save-btn" onclick="saveWeightMultipliers()" style="margin-bottom:0">Commit Multipliers</button>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-title">Habit Configuration</div>
+        <p style="font-size:0.8rem;color:var(--muted);margin-bottom:20px;line-height:1.7;">Establish load-bearing capacity. High-weight habits dictate your execution score ceiling.</p>
         <div id="habits-editor"></div>
         <button class="add-btn" onclick="addHabitField()">[+] Append Habit</button>
-        <div style="margin-top:16px"><button class="save-btn" onclick="saveHabits()">Commit Load Weights</button></div>
+        <div style="margin-top:16px"><button class="save-btn" onclick="saveHabits()">Commit Configuration</button></div>
       </div>
       
       <div class="settings-section">
@@ -759,7 +840,12 @@ async function authGuard() {
 // Run the check immediately
 authGuard();
   
-const HABIT_WEIGHTS = { critical: 3.0, high: 3.0, medium: 1.0, low: 0.5 };
+const HABIT_WEIGHTS = { critical: 3.0, high: 3.0, medium: 1.0, low: 0.5 }; // Fallback defaults
+function getHabitWeight(habitName) {
+  const stake = S.habitStakes[habitName] || 'medium';
+  const m = S.habitWeightMultipliers || {};
+  return m[stake] !== undefined ? m[stake] : (HABIT_WEIGHTS[stake] || 1.0);
+}
 const STAKES = {
   low:      { label: 'LOW',  cls: 'stake-low'  },
   medium:   { label: 'MED',  cls: 'stake-med'  },
@@ -778,7 +864,9 @@ let S = {
   lastWeekDelta: '', weeklyRecaps: {},
   monthlyAudits: {}, dailyFrictionQuestion: '', monthDelta: '',
   weeklyNonNeg: [], weeklyNonNegStatus: {}, weeklyNonNegBonusGiven: {},
-  pendingPruneHabit: null
+  pendingPruneHabit: null,
+  habitWeightMultipliers: { critical: 3.0, high: 3.0, medium: 1.0, low: 0.5 },
+  lastFrictionFailure: ''
 };
 let currentUser = null;
 let authMode = 'login';
@@ -942,7 +1030,9 @@ async function loadUserSettings() {
     S.weeklyNonNeg           = meta.weeklyNonNeg           || [];
     S.weeklyNonNegStatus     = meta.weeklyNonNegStatus     || {};
     S.weeklyNonNegBonusGiven = meta.weeklyNonNegBonusGiven || {};
-    S.pendingPruneHabit      = meta.pendingPruneHabit      || null;
+    S.pendingPruneHabit        = meta.pendingPruneHabit        || null;
+    S.habitWeightMultipliers   = meta.habitWeightMultipliers   || { critical: 3.0, high: 3.0, medium: 1.0, low: 0.5 };
+    S.lastFrictionFailure      = meta.lastFrictionFailure      || '';
 
     S.groqKey = meta.groqKey || localStorage.getItem('vantage_groq_key') || '';
     if (S.groqKey) { localStorage.setItem('vantage_groq_key', S.groqKey); }
@@ -969,6 +1059,8 @@ async function saveUserSettings() {
     weeklyNonNegBonusGiven: S.weeklyNonNegBonusGiven || {},
     pendingPruneHabit:      S.pendingPruneHabit      || null,
     groqKey:                S.groqKey                || '',
+    habitWeightMultipliers: S.habitWeightMultipliers  || { critical: 3.0, high: 3.0, medium: 1.0, low: 0.5 },
+    lastFrictionFailure:    S.lastFrictionFailure     || '',
   };
   await sb.from('user_settings').upsert({
     user_id: currentUser.id,
@@ -1048,7 +1140,7 @@ function calcDailyScore(dk) {
   const day = S.days[dk] || { habits: {} };
   let totalW = 0, doneW = 0;
   S.habits.forEach(h => {
-    const w = HABIT_WEIGHTS[S.habitStakes[h] || 'medium'] || 1;
+    const w = getHabitWeight(h);
     totalW += w;
     if (day.habits[h]) doneW += w;
   });
@@ -1095,6 +1187,8 @@ function initToday(dk) {
   document.getElementById('inp-sleep').value=d.sleep||'';
   document.getElementById('inp-win').value=d.win||'';
   document.getElementById('text-log').value=d.log||'';
+  const outEl = document.getElementById('inp-output');
+  if (outEl) outEl.value = localStorage.getItem('vantage_output_' + dk) || '';
   const now=new Date();
   document.getElementById('today-date-label').textContent=now.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
   
@@ -1102,6 +1196,7 @@ function initToday(dk) {
   renderWeeklyGoals();
   renderWeeklyNonNeg();
   injectDailyFrictionQuestion();
+  checkFrictionLock();
   generateBriefing();
 }
 
@@ -1168,6 +1263,8 @@ async function saveDay() {
   d.sleep=parseFloat(document.getElementById('inp-sleep').value)||null;
   d.win=document.getElementById('inp-win').value;
   d.log=document.getElementById('text-log').value;
+  const outVal = document.getElementById('inp-output')?.value?.trim() || '';
+  if (outVal) localStorage.setItem('vantage_output_' + dk, outVal);
   await saveDayToDB(dk,d);
 }
 
@@ -1335,11 +1432,15 @@ async function generateBriefing() {
   const doneHabits=yday?S.habits.filter(h=>yday.habits[h]):[];
   const missedHabits=yday?S.habits.filter(h=>!yday.habits[h]):[...S.habits];
   const missedStrategic=missedHabits.filter(h=>{const s=S.habitStakes[h]||'medium';return s==='high'||s==='critical';});
-  const prompt=`You are VANTAGE AI, a brutally honest performance advisor built for high-stakes execution.
-Generate a 2-3 sentence "Project Briefing" for the start of today.
-Yesterday: Habits done: ${doneHabits.length}/${S.habits.length}.
-Missed: ${missedHabits.join(', ')||'none'}. Strategic failures: ${missedStrategic.join(', ')||'none'}.
-Write a direct site briefing. Max 55 words. No fluff. Do not use em dashes or emojis.`;
+  const outputLedger = document.getElementById('inp-output')?.value?.trim() || localStorage.getItem('vantage_output_' + dk) || '';
+  const prompt=`You are VANTAGE AI. A zero-tolerance performance intelligence system. Your only job is accurate diagnosis and hard truth.
+BIOMETRICS: Mood ${mood}/10. Sleep ${sleep||'not logged'}h.
+HABITS COMPLETED (${doneHabits.length}/${S.habits.length}): ${doneHabits.join(', ')||'none'}
+HABITS MISSED: ${missedHabits.join(', ')||'none'}
+STRATEGIC FAILURES (HIGH or CRIT tier): ${missedStrategic.join(', ')||'none'}
+STATED OUTPUT: "${outputLedger || 'NONE. No output logged.'}"
+VOICE LOG: "${log||'none'}"
+CROSS-REFERENCE DIRECTIVE: Compare the stated output against the habits completed. If the user completed easy habits but has vague or missing output, call it busy-work explicitly. If they missed critical habits but claim strong output, call out the structural contradiction. Do not validate. Deliver: 1) System status verdict. 2) Output authenticity assessment. 3) One non-negotiable structural fix. Max 180 words. No emojis. No em dashes. No preamble.`;
   try {
     const text=await callGroq([{role:'user',content:prompt}],130,0.75);
     briefingEl.textContent=text;
@@ -1417,23 +1518,72 @@ function renderMonthPage() {
     svg.innerHTML=`<polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round"/>`;
   } else { svg.innerHTML=`<text x="10" y="35" fill="#555" font-size="11" font-family="Space Mono">Insufficient data</text>`; }
   
+ // DELUSION GAP CALCULATION
+  const dgEl = document.getElementById('delusion-gap-content');
+  if (dgEl) {
+    const dg = calcDelusionGap();
+    const isDeluded = dg.gap > 25;
+    const gapColor = isDeluded ? 'var(--red)' : (dg.gap < 0 ? 'var(--yellow)' : 'var(--green)');
+    dgEl.innerHTML = `<div class="delusion-gap-wrap">
+      <div class="delusion-gap-metric">
+        <div class="delusion-gap-val" style="color:${gapColor}">${dg.gap > 0 ? '+' : ''}${dg.gap}%</div>
+        <div class="delusion-gap-sub">Habit Rate: ${dg.habitPct}%<br>Goal Rate: ${dg.goalPct}%<br>Delta: ${Math.abs(dg.gap)}pts</div>
+      </div>
+      ${isDeluded
+        ? `<div class="delusion-verdict">Verdict: Busy-work pattern detected. You are completing low-friction habits while failing goal-critical objectives. Redirect execution toward output, not activity.</div>`
+        : (dg.gap < -15
+          ? `<div class="delusion-verdict" style="border-color:var(--yellow);color:var(--yellow);background:rgba(251,191,36,0.04)">Verdict: Goals progressing faster than habit consistency. Unsustainable. Anchor the foundation or the output collapses.</div>`
+          : `<div class="delusion-clear">Gap within tolerance. Habit execution and goal progress are structurally correlated.</div>`)
+      }
+    </div>`;
+  }
+
+  // 28-DAY ROLLING CONSISTENCY MATRIX
   const hm=document.getElementById('month-heatmap'); hm.innerHTML='';
-  S.habits.forEach(h=>{
-    const row=document.createElement('div'); row.className='heatmap-row';
-    const lbl=document.createElement('div'); lbl.className='hm-label'; lbl.textContent=h; lbl.title=h;
-    const dots=document.createElement('div'); dots.className='hm-dots';
-    let cnt=0;
-    for (let d=1;d<=dim;d++) {
-      const dk=dateKey(d,S.month,S.year); const checked=S.days[dk]?.habits?.[h]||false;
-      if (checked) cnt++;
-      const dot=document.createElement('div'); dot.className='hm-dot';
-      dot.style.background=checked?'var(--green)':'var(--border)';
-      dots.appendChild(dot);
-    }
-    const pct=document.createElement('div'); pct.className='hm-pct';
-    const p=Math.round((cnt/dim)*100); pct.style.color=getScoreColor(p); pct.textContent=p+'%';
-    row.appendChild(lbl); row.appendChild(dots); row.appendChild(pct); hm.appendChild(row);
+  const todayDate = new Date(); todayDate.setHours(0,0,0,0);
+  const days28 = [];
+  for (let i=27; i>=0; i--) {
+    const d=new Date(todayDate); d.setDate(todayDate.getDate()-i);
+    days28.push(d.toISOString().split('T')[0]);
+  }
+  // Day-of-week headers aligned to first day
+  const headerRow = document.createElement('div'); headerRow.className='matrix-28';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(dh=>{
+    const h=document.createElement('div'); h.className='matrix-28-header'; h.textContent=dh; headerRow.appendChild(h);
   });
+  hm.appendChild(headerRow);
+
+  const grid28 = document.createElement('div'); grid28.className='matrix-28';
+  // Pad leading empty cells so day 0 lands on the correct column
+  const firstDow = new Date(days28[0]).getDay();
+  for (let p=0; p<firstDow; p++) {
+    const empty=document.createElement('div'); empty.style.cssText='aspect-ratio:1;border:1px solid transparent;border-radius:3px;';
+    grid28.appendChild(empty);
+  }
+  days28.forEach(dk=>{
+    const hasData = !!S.days[dk];
+    const score = hasData ? calcDailyScore(dk) : null;
+    const cell=document.createElement('div'); cell.className='matrix-28-cell';
+    if (score===null) {
+      cell.style.background='var(--surface2)'; cell.style.borderColor='var(--border)'; cell.style.opacity='0.45';
+    } else {
+      // Scale from near-black to Vantage Green (#dfff00) based on score
+      const alpha = Math.max(0.07, score/100);
+      cell.style.background=`rgba(223,255,0,${alpha.toFixed(2)})`;
+      cell.style.borderColor = score>=80 ? 'rgba(223,255,0,0.55)' : (score>=50 ? 'rgba(223,255,0,0.2)' : 'rgba(223,255,0,0.07)');
+    }
+    const dateLabel=document.createElement('div'); dateLabel.className='matrix-28-date';
+    dateLabel.textContent=parseInt(dk.split('-')[2]);
+    cell.appendChild(dateLabel);
+    cell.title=`${dk}: ${score!==null ? score+'%' : 'No data'}`;
+    grid28.appendChild(cell);
+  });
+  hm.appendChild(grid28);
+
+  const legend=document.createElement('div');
+  legend.style.cssText='display:flex;align-items:center;gap:12px;margin-top:14px;font-family:Space Mono,monospace;font-size:0.5rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;';
+  legend.innerHTML='<span>No Data</span><div style="width:12px;height:12px;background:var(--surface2);border:1px solid var(--border);border-radius:2px;flex-shrink:0"></div><div style="flex:1;height:3px;background:linear-gradient(to right, rgba(223,255,0,0.07), rgba(223,255,0,1));border-radius:2px"></div><span>100%</span>';
+  hm.appendChild(legend);
   
   renderBarChart('cal-bars',cals,2800,'var(--yellow)','');
   renderBarChart('prot-bars',prots,300,'var(--pink)','g');
@@ -1534,7 +1684,7 @@ function renderSettings() {
   document.getElementById('set-month').value=S.month;
   document.getElementById('set-year').value=S.year;
   document.getElementById('set-groq-key').value=S.groqKey || localStorage.getItem('vantage_groq_key') || '';
-  renderHabitsEditor(); renderGoalsEditor(); renderWnnSettings();
+  renderWeightEditor(); renderHabitsEditor(); renderGoalsEditor(); renderWnnSettings();
 }
 function renderHabitsEditor() {
   const ed=document.getElementById('habits-editor'); ed.innerHTML='';
@@ -1892,6 +2042,124 @@ function generateFrictionQuestion(rf) {
 
 function closeReviewModal(id) { document.getElementById(id).classList.add('hidden'); }
 
+// ─── MODULE 1: FRICTION LOCK PROTOCOL ─────────────────────────────────────
+function checkFrictionLock() {
+  const today = todayStr();
+  const resolved = localStorage.getItem('vantage_friction_resolved_' + today);
+  if (resolved) {
+    document.getElementById('friction-alert').style.display = 'none';
+    document.getElementById('page-today').classList.remove('today-locked');
+    return;
+  }
+  const yest = new Date(); yest.setDate(yest.getDate()-1);
+  const yk = yest.toISOString().split('T')[0];
+  const prev = new Date(); prev.setDate(prev.getDate()-2);
+  const pk = prev.toISOString().split('T')[0];
+  const scoreYest = calcDailyScore(yk);
+  const scorePrev = calcDailyScore(pk);
+  // Only trigger if both days have logged data AND both are below 50%
+  const hasDataYest = !!S.days[yk]; const hasDataPrev = !!S.days[pk];
+  const shouldLock = hasDataYest && hasDataPrev && scoreYest < 50 && scorePrev < 50;
+  const alertEl = document.getElementById('friction-alert');
+  const pageEl = document.getElementById('page-today');
+  if (!alertEl || !pageEl) return;
+  if (shouldLock) {
+    alertEl.style.display = 'block';
+    pageEl.classList.add('today-locked');
+  } else {
+    alertEl.style.display = 'none';
+    pageEl.classList.remove('today-locked');
+  }
+}
+
+function checkFrictionUnlock() {
+  const input = document.getElementById('friction-failure-input');
+  const btn = document.getElementById('friction-unlock-btn');
+  if (!input || !btn) return;
+  const ready = input.value.trim().length >= 25;
+  btn.disabled = !ready;
+  btn.style.opacity = ready ? '1' : '0.4';
+}
+
+function unlockFrictionAlert() {
+  const input = document.getElementById('friction-failure-input');
+  if (!input || input.value.trim().length < 25) {
+    showToast('Structural analysis insufficient. Be specific.', 3000, 'negative');
+    return;
+  }
+  const today = todayStr();
+  S.lastFrictionFailure = input.value.trim();
+  localStorage.setItem('vantage_friction_resolved_' + today, 'true');
+  document.getElementById('friction-alert').style.display = 'none';
+  document.getElementById('page-today').classList.remove('today-locked');
+  showToast('Failure logged. System unlocked.', 2500, 'positive');
+  saveUserSettings();
+}
+
+// ─── MODULE 1: OUTPUT LEDGER PERSISTENCE ─────────────────────────────────
+function saveOutputLedger() {
+  const val = document.getElementById('inp-output')?.value?.trim() || '';
+  if (val) localStorage.setItem('vantage_output_' + todayStr(), val);
+}
+
+// ─── MODULE 2: DELUSION GAP CALCULATION ───────────────────────────────────
+function calcDelusionGap() {
+  const dim = daysInMonth(S.month, S.year);
+  let totalDone = 0, totalPossible = 0;
+  for (let d=1; d<=dim; d++) {
+    const dk = dateKey(d, S.month, S.year);
+    const day = S.days[dk];
+    if (!day) continue;
+    S.habits.forEach(h => {
+      totalPossible++;
+      if (day.habits[h]) totalDone++;
+    });
+  }
+  const habitPct = totalPossible > 0 ? Math.round((totalDone/totalPossible)*100) : 0;
+  const goals = S.goals.filter(g => g.type==='monthly' || g.type==='weekly');
+  const goalPct = goals.length > 0
+    ? Math.round(goals.reduce((acc,g)=>acc+(g.progress||0),0)/(goals.length*10)*100)
+    : 0;
+  return { habitPct, goalPct, gap: habitPct - goalPct };
+}
+
+// ─── MODULE 3: WEIGHT EDITOR ───────────────────────────────────────────────
+function renderWeightEditor() {
+  const ed = document.getElementById('weight-editor'); if (!ed) return;
+  const m = S.habitWeightMultipliers || {};
+  const tiers = [
+    { key:'critical', label:'CRIT', cls:'stake-crit', default:3.0, desc:'Non-negotiable anchor. System-critical.' },
+    { key:'high',     label:'HIGH', cls:'stake-high', default:3.0, desc:'Strategic necessity. High leverage.'   },
+    { key:'medium',   label:'MED',  cls:'stake-med',  default:1.0, desc:'Core baseline. Standard execution.'   },
+    { key:'low',      label:'LOW',  cls:'stake-low',  default:0.5, desc:'Maintenance tier. Low impact.'        },
+  ];
+  ed.innerHTML = tiers.map(t=>`
+    <div class="weight-edit-row">
+      <div class="weight-edit-label"><span class="stake-tag ${t.cls}">${t.label}</span></div>
+      <div class="weight-edit-desc">${t.desc}</div>
+      <input type="number" class="inp weight-edit-input" id="wm-${t.key}"
+        value="${m[t.key] !== undefined ? m[t.key] : t.default}"
+        step="0.1" min="0.1" max="10.0"/>
+      <span class="weight-edit-unit">x</span>
+    </div>`).join('');
+}
+
+async function saveWeightMultipliers() {
+  if (!S.habitWeightMultipliers) S.habitWeightMultipliers = {};
+  ['critical','high','medium','low'].forEach(k=>{
+    const el = document.getElementById('wm-'+k);
+    if (el) {
+      const val = parseFloat(el.value);
+      S.habitWeightMultipliers[k] = (!isNaN(val) && val>=0.1) ? val : HABIT_WEIGHTS[k];
+    }
+  });
+  await saveUserSettings();
+  showToast('Multipliers committed.', 2000, 'positive');
+  initToday(todayStr()); // Recalculate today's score with new weights
+}
+
+// ─── PRUNE & FRICTION INJECTIONS ──────────────────────────────────────────
+  
 // ─── PRUNE & FRICTION INJECTIONS ──────────────────────────────────────────
 function checkPendingPrune() {
   if (!S.pendingPruneHabit) return;
