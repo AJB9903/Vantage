@@ -1318,6 +1318,12 @@ function buildGoalItem(g, interactive) {
   return el;
 }
 
+function deadlineBadgeClass(cls) {
+  return 'deadline-' + cls;
+}
+function countdownClass(cls) {
+  return cls;
+}
 function getUrgency(deadline) {
   if (!deadline) return {level:0,label:'',days:null,cls:'ok'};
   const now = new Date(); now.setHours(0,0,0,0);
