@@ -66,7 +66,9 @@ nav {
 .nav-op:hover { color: var(--white); }
 
 @media (max-width: 480px) {
-  nav { padding: 20px 20px; }
+  nav { padding: 16px 20px; }
+  nav > div:last-child { gap: 10px; }
+  nav > div:last-child > div { display: none; }
   .nav-logo { font-size: 1.1rem; }
   .nav-op { font-size: 0.55rem; }
 }
@@ -74,27 +76,30 @@ nav {
 /* ── HERO ── */
 #hero {
   position: relative; min-height: 100svh;
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 100px 56px 60px; overflow: hidden; z-index: 1;
+  display: grid; grid-template-columns: 1.2fr 1fr; align-items: center; gap: 48px;
+  padding: 110px 56px 60px; overflow: hidden; z-index: 1;
 }
+
+.hero-left { display: flex; flex-direction: column; justify-content: center; }
+.hero-right { display: flex; align-items: center; justify-content: flex-end; }
 
 .hero-eyebrow { font-family: 'Space Mono', monospace; font-size: 0.62rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 28px; display: flex; align-items: center; gap: 14px; opacity: 0; animation: fadeUp .8s ease forwards .2s; }
 .hero-eyebrow::before { content: ''; display: block; width: 40px; height: 1px; background: var(--accent); flex-shrink: 0; }
 
-.hero-headline { font-family: 'Syne', sans-serif; font-size: clamp(3.2rem, 8vw, 8rem); font-weight: 800; line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 32px; opacity: 0; animation: fadeUp .9s ease forwards .4s; }
+.hero-headline { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 6vw, 7.5rem); font-weight: 800; line-height: 0.95; letter-spacing: -0.03em; margin-bottom: 32px; opacity: 0; animation: fadeUp .9s ease forwards .4s; }
 .hero-headline em { font-style: normal; color: var(--accent); }
 
-.hero-sub { max-width: 420px; font-size: 0.95rem; line-height: 1.75; color: var(--muted); margin-bottom: 44px; opacity: 0; animation: fadeUp .9s ease forwards .6s; }
+.hero-sub { max-width: 400px; font-size: 0.95rem; line-height: 1.75; color: var(--muted); margin-bottom: 44px; opacity: 0; animation: fadeUp .9s ease forwards .6s; }
 
 .hero-actions { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; opacity: 0; animation: fadeUp .9s ease forwards .8s; }
 
-.btn-primary { background: var(--accent); color: var(--black); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 800; padding: 14px 32px; border-radius: 6px; text-decoration: none; transition: all .2s; box-shadow: 0 4px 20px rgba(223,255,0,0.15); }
+.btn-primary { background: var(--accent); color: var(--black); font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 800; padding: 14px 32px; border-radius: 6px; text-decoration: none; transition: all .2s; box-shadow: 0 4px 20px rgba(223,255,0,0.15); border: none; }
 .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(223,255,0,0.25); }
 .btn-ghost { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 10px; transition: color .25s; font-weight: 700; }
 .btn-ghost::after { content: '↓'; font-size: 0.9rem; color: var(--accent); }
 .btn-ghost:hover { color: var(--white); }
 
-.hero-terminal { position: absolute; right: 56px; top: 50%; transform: translateY(-50%); width: 440px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.8); opacity: 0; animation: fadeLeft 1s ease forwards 1s; }
+.hero-terminal { width: 100%; max-width: 460px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.8); opacity: 0; animation: fadeInRight 1s ease forwards 1s; }
 .terminal-bar { background: var(--surface); padding: 12px 18px; display: flex; align-items: center; gap: 7px; border-bottom: 1px solid var(--border); }
 .t-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .terminal-label { margin-left: auto; font-family: 'Space Mono', monospace; font-size: 0.52rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
@@ -105,8 +110,9 @@ nav {
 .t-cursor { display: inline-block; width: 7px; height: 13px; background: var(--accent); vertical-align: middle; animation: blink 1s step-end infinite; }
 
 @media (max-width: 900px) {
-  #hero { padding: 100px 24px 60px; }
-  .hero-terminal { position: relative; right: auto; top: auto; transform: none; width: 100%; margin-top: 48px; opacity: 1; animation: none; }
+  #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 40px; }
+  .hero-right { justify-content: flex-start; }
+  .hero-terminal { max-width: 100%; opacity: 1; animation: none; }
 }
 @media (max-width: 480px) {
   #hero { padding: 90px 20px 48px; }
@@ -287,7 +293,22 @@ nav {
   #philosophy { padding: 60px 20px; }
 }
 
-/* ── ROADMAP / BETA TRANSPARENCY ── */
+/* ── SCARCITY COUNTER ── */
+.spots-counter { background: var(--card); border: 1px solid rgba(223,255,0,0.2); border-radius: 6px; padding: 20px 24px; margin-bottom: 32px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.spots-left { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent); letter-spacing: -1.5px; line-height: 1; }
+.spots-label { font-family: 'Space Mono', monospace; font-size: 0.55rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+.spots-bar-wrap { flex: 1; }
+.spots-bar-label { font-family: 'Space Mono', monospace; font-size: 0.5rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
+.spots-bar-bg { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.spots-bar-fill { height: 100%; border-radius: 2px; background: var(--accent); width: 86.7%; }
+.spots-live { display: flex; align-items: center; gap: 6px; font-family: 'Space Mono', monospace; font-size: 0.5rem; letter-spacing: 1px; text-transform: uppercase; color: var(--red); margin-top: 8px; }
+.spots-live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--red); animation: pulse 1.5s ease-in-out infinite; }
+
+/* ── PRICE ANCHOR ── */
+.price-anchor { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.price-now { font-family: 'Syne', sans-serif; font-size: 2.4rem; font-weight: 800; color: var(--accent); letter-spacing: -1.5px; }
+.price-period { font-family: 'Space Mono', monospace; font-size: 0.58rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+.price-future { font-family: 'Space Mono', monospace; font-size: 0.68rem; color: var(--muted); letter-spacing: 1px; text-decoration: line-through; opacity: 0.6; }
 #roadmap { padding: 140px 56px; border-top: 1px solid var(--border); background: var(--black); position: relative; z-index: 1; }
 .roadmap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
 .roadmap-headline { font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 3.8vw, 4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 20px; }
@@ -351,8 +372,10 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
 .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeLeft { from { opacity: 0; transform: translateY(-50%) translateX(40px); } to { opacity: 1; transform: translateY(-50%) translateX(0); } }
+@keyframes fadeInRight { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes blink { 0%,100% {opacity:1} 50% {opacity:0} }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+@keyframes countDown { from { width: 100%; } to { width: 0%; } }
 </style>
 </head>
 <body>
@@ -363,38 +386,49 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
 <!-- NAV -->
 <nav>
   <div class="nav-logo">VANTAGE<span>.</span></div>
-  <a href="#" class="nav-op interactive" onclick="operatorLogin(); return false;">Operator Access</a>
+  <div style="display:flex; align-items:center; gap:20px;">
+    <div style="display:flex; align-items:center; gap:8px; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.2); border-radius:4px; padding:7px 14px;">
+      <div style="width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 1.5s ease-in-out infinite;flex-shrink:0;"></div>
+      <span style="font-family:'Space Mono',monospace; font-size:0.52rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--red);">4 / 30 Spots Left</span>
+    </div>
+    <a href="#" class="nav-op interactive" onclick="operatorLogin(); return false;">Operator Access</a>
+  </div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-eyebrow">Personal Operating System</div>
-  <h1 class="hero-headline">Your life<br/><em>architected.</em></h1>
-  <p class="hero-sub">VANTAGE is the command center for exceptional people. A unified personal OS that transforms how you think, plan, and execute every single day.</p>
-  <div class="hero-actions">
-    <a href="#" class="btn-primary interactive" onclick="handlePurchase(); return false;">Get Access — $6.99</a>
-    <a href="#preview" class="btn-ghost interactive">See it in action</a>
+  <div class="hero-left">
+    <div class="hero-eyebrow">Personal Operating System</div>
+    <h1 class="hero-headline">Your life<br/><em>architected.</em></h1>
+    <p class="hero-sub">VANTAGE is the command center for exceptional people. A unified personal OS that transforms how you think, plan, and execute every single day.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary interactive" onclick="handlePurchase(); return false;">Invest in your Trajectory</a>
+      <a href="#preview" class="btn-ghost interactive">See it in action</a>
+    </div>
   </div>
 
-  <div class="hero-terminal">
-    <div class="terminal-bar">
-      <div class="t-dot" style="background:#ff5f57"></div>
-      <div class="t-dot" style="background:#febc2e"></div>
-      <div class="t-dot" style="background:#28c840"></div>
-      <span class="terminal-label">vantage -- sys</span>
-    </div>
-    <div class="terminal-body">
-      <div><span class="t-prompt">▸ </span><span>vantage init --user="Operator"</span></div>
-      <div class="t-output">Calibrating cognitive profile...</div>
-      <div class="t-success">✓ Habit stack loaded</div>
-      <div class="t-success">✓ Weekly non-negotiables set</div>
-      <div class="t-success">✓ AI neural link established</div>
-      <br/>
-      <div><span class="t-prompt">▸ </span><span>vantage status</span></div>
-      <div class="t-output">Execution Score: <span style="color:var(--accent)">94%</span></div>
-      <div class="t-output">Trajectory: <span style="color:var(--accent)">Compounding</span></div>
-      <br/>
-      <div><span class="t-prompt">▸ </span><span class="t-cursor"></span></div>
+  <div class="hero-right">
+    <div class="hero-terminal">
+      <div class="terminal-bar">
+        <div class="t-dot" style="background:#ff5f57"></div>
+        <div class="t-dot" style="background:#febc2e"></div>
+        <div class="t-dot" style="background:#28c840"></div>
+        <span class="terminal-label">vantage -- sys</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">▸ </span><span>vantage init --user="Operator"</span></div>
+        <div class="t-output">Calibrating cognitive profile...</div>
+        <div class="t-success">✓ Habit stack loaded</div>
+        <div class="t-success">✓ Weekly non-negotiables set</div>
+        <div class="t-success">✓ AI neural link established</div>
+        <br/>
+        <div><span class="t-prompt">▸ </span><span>vantage status</span></div>
+        <div class="t-output">Execution Score: <span style="color:var(--accent)">94%</span></div>
+        <div class="t-output">Trajectory: <span style="color:var(--accent)">Compounding</span></div>
+        <div class="t-output">Founding Spots: <span style="color:var(--red)">4 / 30 remaining</span></div>
+        <br/>
+        <div><span class="t-prompt">▸ </span><span class="t-cursor"></span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -458,6 +492,14 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
             Weekly review prep
             <span class="task-tag" style="color:var(--muted); border-color:var(--border);">MED</span>
           </div>
+          <div style="margin-top:20px; background:var(--surface); border:1px solid rgba(223,255,0,0.12); border-radius:4px; padding:16px;">
+            <div style="font-family:'Space Mono',monospace; font-size:0.48rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; font-weight:700;">Terminal Diagnostic</div>
+            <div style="font-family:'Space Mono',monospace; font-size:0.62rem; line-height:1.9; color:var(--muted);">
+              <span style="color:var(--green)">✓</span> System score above 90% threshold<br/>
+              <span style="color:var(--red)">!</span> Shutdown sequence violated 3x this week<br/>
+              <span style="color:var(--accent)">▸</span> Rec: Lock 22:30 device cutoff. Non-negotiable.
+            </div>
+          </div>
         </div>
 
         <!-- TRAJECTORY PANEL -->
@@ -515,7 +557,15 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
             <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:88%"></div></div>
             <div class="goal-pct">88%</div>
           </div>
-        </div>
+          <div style="margin-top:20px; background:var(--surface); border:1px solid rgba(223,255,0,0.12); border-radius:4px; padding:16px;">
+            <div style="font-family:'Space Mono',monospace; font-size:0.48rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; font-weight:700;">Terminal Diagnostic</div>
+            <div style="font-family:'Space Mono',monospace; font-size:0.62rem; line-height:1.9; color:var(--muted);">
+              <span style="color:var(--green)">✓</span> Physical at 92%: anchor holding strong<br/>
+              <span style="color:var(--red)">!</span> Finance at 61%: 23 days behind target pace<br/>
+              <span style="color:var(--accent)">▸</span> Rec: Allocate 1 deep work block per week to finance review.
+            </div>
+          </div>
+        </div><!-- /panel-trajectory -->
 
         <!-- CHRONOLOGY PANEL -->
         <div class="dash-panel" id="panel-chronology">
@@ -551,7 +601,15 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
             <div class="chron-dot green"></div>
             <div class="chron-text"><strong>Morning mass PR.</strong> 171 consecutive morning protocols logged this month.</div>
           </div>
-        </div>
+          <div style="margin-top:20px; background:var(--surface); border:1px solid rgba(223,255,0,0.12); border-radius:4px; padding:16px;">
+            <div style="font-family:'Space Mono',monospace; font-size:0.48rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; font-weight:700;">Terminal Diagnostic</div>
+            <div style="font-family:'Space Mono',monospace; font-size:0.62rem; line-height:1.9; color:var(--muted);">
+              <span style="color:var(--green)">✓</span> Heatmap density up 34% vs prior month<br/>
+              <span style="color:var(--red)">!</span> Three full-miss days in weeks 1 and 2<br/>
+              <span style="color:var(--accent)">▸</span> Pattern: Misses cluster on Sundays. Build a Sunday contingency protocol.
+            </div>
+          </div>
+        </div><!-- /panel-chronology -->
 
         <!-- OUTPUTS PANEL -->
         <div class="dash-panel" id="panel-outputs">
@@ -592,7 +650,15 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
               Strong momentum. Two critical directives cleared. The Q2 strategy block is your highest leverage move today -- go deep and do not let anything interrupt the first 90 minutes. Protect your shutdown sequence tonight.
             </div>
           </div>
-        </div>
+          <div style="background:var(--surface); border:1px solid rgba(223,255,0,0.12); border-radius:4px; padding:16px;">
+            <div style="font-family:'Space Mono',monospace; font-size:0.48rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; font-weight:700;">Terminal Diagnostic</div>
+            <div style="font-family:'Space Mono',monospace; font-size:0.62rem; line-height:1.9; color:var(--muted);">
+              <span style="color:var(--green)">✓</span> 3 diagnostic cycles completed this month<br/>
+              <span style="color:var(--red)">!</span> Output habit depth score 14% below goal<br/>
+              <span style="color:var(--accent)">▸</span> Rec: Quantity is solid. Shift focus to depth per session in April.
+            </div>
+          </div>
+        </div><!-- /panel-outputs -->
 
         <!-- SYSTEM PANEL -->
         <div class="dash-panel" id="panel-system">
@@ -632,6 +698,14 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
             <div style="display:flex;align-items:center;gap:10px">
               <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
               <span style="font-size:0.78rem;color:var(--muted)">Groq API connected. Diagnostics active.</span>
+            </div>
+          </div>
+          <div style="margin-top:16px; background:var(--surface); border:1px solid rgba(223,255,0,0.12); border-radius:4px; padding:16px;">
+            <div style="font-family:'Space Mono',monospace; font-size:0.48rem; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:10px; font-weight:700;">Terminal Diagnostic</div>
+            <div style="font-family:'Space Mono',monospace; font-size:0.62rem; line-height:1.9; color:var(--muted);">
+              <span style="color:var(--green)">✓</span> Habit weights balanced. Total stake = 100pts<br/>
+              <span style="color:var(--red)">!</span> Deep Work weight may be under-indexed for current goals<br/>
+              <span style="color:var(--accent)">▸</span> Rec: Raise Deep Work to 30. Drop Sleep to 15. Re-calibrate quarterly.
             </div>
           </div>
         </div>
@@ -739,20 +813,52 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
   </div>
 </section>
 
-<!-- BETA TRANSPARENCY -->
+<!-- FOUNDING OPERATOR PROGRAM -->
 <section id="roadmap">
-  <div class="section-label reveal">Beta Transparency</div>
+  <div class="section-label reveal">Founding Operator Program</div>
   <div class="roadmap-grid reveal">
     <div>
-      <h2 class="roadmap-headline">Built in public.<br/><em>Priced for early believers.</em></h2>
-      <p class="roadmap-sub">Everyone who enters the system now locks in lifetime access before subscription pricing initiates.</p>
+      <h2 class="roadmap-headline">30 operators.<br/>One architecture.<br/><em>Built together.</em></h2>
+      <p class="roadmap-sub">This is not a beta. This is a founding partnership. You help shape the architecture, and VANTAGE guarantees you are grandfathered into this price point forever.</p>
+
+      <div class="spots-counter">
+        <div>
+          <div class="spots-left">4</div>
+          <div class="spots-label">Spots Remaining</div>
+        </div>
+        <div class="spots-bar-wrap">
+          <div class="spots-bar-label">
+            <span>26 / 30 Filled</span>
+            <span style="color:var(--red)">Nearly Closed</span>
+          </div>
+          <div class="spots-bar-bg"><div class="spots-bar-fill"></div></div>
+          <div class="spots-live"><div class="spots-live-dot"></div> Live capacity tracker</div>
+        </div>
+      </div>
+
+      <div class="price-anchor">
+        <div>
+          <div class="price-now">$6.99</div>
+          <div class="price-period">Founding rate. Locked permanently.</div>
+        </div>
+        <div style="height:40px;width:1px;background:var(--border)"></div>
+        <div>
+          <div class="price-future">$19/mo</div>
+          <div class="price-period">Future subscription rate</div>
+        </div>
+      </div>
+
       <div class="lock-row">
         <span class="lock-tag">[LOCKED]</span>
-        <span class="lock-text">Your $6.99 price is locked permanently. No price increases, ever.</span>
+        <span class="lock-text">Your $6.99 entry price is permanent. When public pricing launches, you pay nothing more.</span>
       </div>
       <div class="lock-row">
         <span class="lock-tag">[DIRECT]</span>
-        <span class="lock-text">Feature requests route directly to the builder. Your vote counts.</span>
+        <span class="lock-text">Every feature request you submit routes directly to the builder. Your architecture shapes the final product.</span>
+      </div>
+      <div class="lock-row">
+        <span class="lock-tag">[ACCESS]</span>
+        <span class="lock-text">Founding Operators receive every future module at no added cost. One entry. Full system. Forever.</span>
       </div>
     </div>
     <div>
@@ -791,7 +897,14 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
           <div class="timeline-marker planned"></div>
           <div class="timeline-status p">Planned</div>
           <div class="timeline-name">iOS Native App</div>
-          <div class="timeline-desc">Standalone iOS app with push notifications and widget support.</div>
+          <div class="timeline-desc">Standalone iOS app with push notifications and home screen widgets.</div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-marker planned"></div>
+          <div class="timeline-status p">Planned</div>
+          <div class="timeline-name">Founding Operator Vault</div>
+          <div class="timeline-desc">Private group access: direct line to the builder, early builds, and architecture voting.</div>
         </div>
       </div>
     </div>
@@ -800,11 +913,14 @@ footer { border-top: 1px solid var(--border); padding: 44px 56px; display: flex;
 
 <!-- CTA -->
 <section id="cta">
-  <span class="cta-tag">Begin Now</span>
-  <h2 class="cta-headline reveal">Take the<br/><em>vantage point.</em></h2>
-  <p class="cta-sub reveal">Join the operators building their Personal OS. Early access is open.</p>
-  <div class="reveal">
-    <button class="cta-buy-btn interactive" onclick="handlePurchase()">Get Access -- $6.99</button>
+  <span class="cta-tag">4 Founding Spots Remaining</span>
+  <h2 class="cta-headline reveal">Invest in your<br/><em>Trajectory.</em></h2>
+  <p class="cta-sub reveal">30 total Founding Operators. 26 spots filled. When this closes, the $6.99 rate is gone permanently.</p>
+  <div class="reveal" style="margin-bottom:16px">
+    <button class="cta-buy-btn interactive" onclick="handlePurchase()">Invest in your Trajectory -- $6.99</button>
+  </div>
+  <div class="reveal" style="font-family:'Space Mono',monospace; font-size:0.58rem; color:var(--muted); letter-spacing:1px;">
+    Founding rate locked forever. Future public price: $19/mo.
   </div>
 </section>
 
