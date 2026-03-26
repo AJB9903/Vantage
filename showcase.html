@@ -428,18 +428,15 @@
   const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
   window.onload = async () => {
-    const access = localStorage.getItem('vantage_access');
-    if (access === 'operator' || access === 'purchased') {
-      window.location.href = 'app.html'; return;
-    }
-    const { data: { session } } = await sb.auth.getSession();
-    if (session?.user) {
-      try {
-        const { data } = await sb.from('user_settings').select('has_access').eq('user_id', session.user.id).single();
-        if (data && data.has_access === true) window.location.href = 'app.html';
-      } catch(e) {}
-    }
-  };
+  const { data: { session } } = await sb.auth.getSession();
+  const access = localStorage.getItem('vantage_access');
+  
+  // ONLY redirect to the app if they have an active session AND the access flag.
+  // This prevents the "jumping" if they are signed in but haven't paid/entered a code.
+  if (session && (access === 'operator' || access === 'purchased')) {
+    window.location.href = 'app.html';
+  }
+};
 
   async function handlePurchase() {
     const { data: { session } } = await sb.auth.getSession();
