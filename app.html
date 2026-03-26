@@ -825,21 +825,27 @@ async function handleAuth() {
   try {
     let res;
     if (authMode === 'login') {
+      // Standard Login
       res = await sb.auth.signInWithPassword({ email, password: pw });
     } else {
+      // NEW SIGNUP FLOW: Redirect to Setup
       res = await sb.auth.signUp({ email, password: pw });
+      
+      // If user is created (or auto-confirmed in local dev)
       if (res.data?.user && !res.error) {
-        err.style.color = 'var(--green)';
-        err.textContent = 'Account created. Check your email to confirm.';
-        switchAuthTab('login'); 
-        btn.disabled = false; 
-        btn.textContent = 'Sign In'; 
+        // Log them in so we have a session for the setup page
+        await sb.auth.signInWithPassword({ email, password: pw });
+        window.location.href = 'setup.html'; 
         return;
       }
     }
+
     if (res.error) throw res.error;
+    
+    // If we reach here, it was a login
     currentUser = res.data.user;
     await initApp();
+    
   } catch(e) { 
     err.style.color = 'var(--red)'; 
     err.textContent = e.message || 'Something went wrong.'; 
