@@ -14,8 +14,8 @@
   --surface:  #0a0a0a;
   --surface2: #161616;
   --border:   #262626;
-  --accent:   #dfff00;  /* Vantage Green */
-  --accent2:  #47ffd4;  
+  --accent:   #dfff00;
+  --accent2:  #47ffd4; 
   --text:     #ffffff;
   --muted:    #a3a3a3;
   --muted2:   #2a2a2a;
@@ -50,7 +50,7 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
 .auth-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 6px; display: block; font-weight: 700; }
 .auth-forgot{display:block;text-align:right;font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);cursor:pointer;margin-top:8px;transition:color .15s;}
 .auth-forgot:hover{color:var(--accent)}
-.auth-btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: var(--radius-sm); padding: 13px; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 800; cursor: pointer; margin-top: 8px; transition: all 0.15s; box-shadow:0 4px 20px rgba(223,255,0,.15); letter-spacing: -0.3px;}
+.auth-btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: var(--radius-sm); padding: 13px; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 800; cursor: pointer; margin-top: 8px; transition: all 0.15s; box-shadow:0 4px 20px rgba(223,255,0,.15); letter-spacing:-0.3px;}
 .auth-btn:hover { background: #e8ff2a; transform: translateY(-1px); box-shadow:0 6px 28px rgba(223,255,0,.25); }
 .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .auth-back{display:none;text-align:center;font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);cursor:pointer;margin-top:14px;transition:color .15s;}
@@ -186,7 +186,7 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
 .feedback-box { background: linear-gradient(135deg,#1a0000,#000000); border: 1px solid #3a0000; border-radius: var(--radius-lg); padding: 20px; font-size: 0.83rem; line-height: 1.7; position:relative; }
 .fb-title { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-family: 'Space Mono', monospace; margin-bottom: 10px; }
 .fb-text { color: #fca5a5; }
-.analyze-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: #000; border: none; border-radius: var(--radius-sm); padding: 12px 20px; font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; cursor: pointer; width: 100%; transition: all 0.15s; margin-top: 10px; }
+.analyze-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: #000; border: none; border-radius: var(--radius-sm); padding: 12px 20px; font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 800; cursor: pointer; width: 100%; transition: all 0.15s; margin-top: 10px; }
 .analyze-btn:hover { background: #c0162e; transform: translateY(-1px); }
 .analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 .save-status { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted); opacity: 0; transition: opacity 0.3s; }
@@ -793,6 +793,10 @@ async function checkAccessLocal() {
     console.error('Boot error:', e);
     window.location.href = 'showcase.html';
   }
+  // Admin Access 
+  if (currentUser && currentUser.email === 'aidanb9903@gmail.com') {
+    document.getElementById('operator-panel').style.display = 'block';
+  }
 })();
 
 function switchAuthTab(mode) {
@@ -809,27 +813,40 @@ async function handleAuth() {
   const conf  = document.getElementById('auth-confirm').value;
   const btn   = document.getElementById('auth-submit-btn');
   const err   = document.getElementById('auth-err');
+  
   err.textContent = '';
   if (!email || !pw) { err.textContent = 'Email and password required.'; return; }
-  if (authMode==='signup' && pw !== conf) { err.textContent = 'Passwords do not match.'; return; }
-  if (authMode==='signup' && pw.length < 6) { err.textContent = 'Minimum 6 characters.'; return; }
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Working...';
+  if (authMode === 'signup' && pw !== conf) { err.textContent = 'Passwords do not match.'; return; }
+  if (authMode === 'signup' && pw.length < 6) { err.textContent = 'Minimum 6 characters.'; return; }
+  
+  btn.disabled = true; 
+  btn.innerHTML = '<span class="spinner"></span>Working...';
+  
   try {
     let res;
-    if (authMode==='login') res = await sb.auth.signInWithPassword({ email, password: pw });
-    else {
+    if (authMode === 'login') {
+      res = await sb.auth.signInWithPassword({ email, password: pw });
+    } else {
       res = await sb.auth.signUp({ email, password: pw });
       if (res.data?.user && !res.error) {
         err.style.color = 'var(--green)';
         err.textContent = 'Account created. Check your email to confirm.';
-        switchAuthTab('login'); btn.disabled = false; btn.textContent = 'Sign In'; return;
+        switchAuthTab('login'); 
+        btn.disabled = false; 
+        btn.textContent = 'Sign In'; 
+        return;
       }
     }
     if (res.error) throw res.error;
     currentUser = res.data.user;
     await initApp();
-  } catch(e) { err.style.color = 'var(--red)'; err.textContent = e.message || 'Something went wrong.'; }
-  btn.disabled = false; btn.textContent = authMode==='login' ? 'Sign In' : 'Create Account';
+  } catch(e) { 
+    err.style.color = 'var(--red)'; 
+    err.textContent = e.message || 'Something went wrong.'; 
+  }
+  
+  btn.disabled = false; 
+  btn.textContent = authMode === 'login' ? 'Sign In' : 'Create Account';
 }
 
 async function handleLogout() {
@@ -869,9 +886,12 @@ async function loadUserSettings() {
   if (!data) return;
 
   if (data.habits && Array.isArray(data.habits) && data.habits.length > 0) S.habits = data.habits;
+  
   if (data.goals) {
-    try { S.goals = typeof data.goals === 'string' ? JSON.parse(data.goals) : data.goals; if (!Array.isArray(S.goals)) S.goals = []; }
-    catch(e) { S.goals = []; }
+    try { 
+      S.goals = typeof data.goals === 'string' ? JSON.parse(data.goals) : data.goals; 
+      if (!Array.isArray(S.goals)) S.goals = []; 
+    } catch(e) { S.goals = []; }
   } else { S.goals = []; }
 
   if (data.meta) {
@@ -883,11 +903,20 @@ async function loadUserSettings() {
     S.monthlyAudits          = meta.monthlyAudits          || {};
     S.dailyFrictionQuestion  = meta.dailyFrictionQuestion  || '';
     S.monthDelta             = meta.monthDelta             || '';
-    S.weeklyNonNeg           = meta.weeklyNonNeg           || [];
+    S.weeklyNonNeg           = meta.weeklyNonNeg            || [];
     S.weeklyNonNegStatus     = meta.weeklyNonNegStatus     || {};
     S.weeklyNonNegBonusGiven = meta.weeklyNonNegBonusGiven || {};
     S.pendingPruneHabit      = meta.pendingPruneHabit      || null;
-    S.groqKey                = meta.groqKey                || localStorage.getItem('groq_key') || '';
+
+    // FIX: Core Persistence Logic
+    // Prioritize the database key, fallback to local storage
+    S.groqKey = meta.groqKey || localStorage.getItem('vantage_groq_key') || '';
+    
+    // Force sync: if we found a key in the DB, lock it into local storage now
+    if (S.groqKey) {
+      localStorage.setItem('vantage_groq_key', S.groqKey);
+    }
+
     const savedStakes = meta.habitStakes || {};
     S.habitStakes = Object.keys(savedStakes).length > 0 ? savedStakes : { ...DEFAULT_HABIT_STAKES };
   } else {
@@ -1500,7 +1529,7 @@ function renderWinsPage() {
 function renderSettings() {
   document.getElementById('set-month').value=S.month;
   document.getElementById('set-year').value=S.year;
-  document.getElementById('set-groq-key').value=S.groqKey||'';
+  document.getElementById('set-groq-key').value=S.groqKey || localStorage.getItem('vantage_groq_key') || '';
   renderHabitsEditor(); renderGoalsEditor(); renderWnnSettings();
 }
 function renderHabitsEditor() {
@@ -1572,13 +1601,12 @@ async function saveWnn() {
   S.weeklyNonNeg = Array.from(inputs).map(el => el.value.trim()).filter(Boolean);
   await saveUserSettings(); showToast('Non-negotiables saved ✓', 2000, 'positive'); renderWnnSettings(); renderWeeklyNonNeg();
 }
-async function saveGroqKey() { S.groqKey=document.getElementById('set-groq-key').value.trim(); localStorage.setItem('groq_key',S.groqKey); await saveUserSettings(); showToast('API key saved ✓', 2000, 'positive'); }
-async function saveMonthSettings() { S.month=parseInt(document.getElementById('set-month').value); S.year=parseInt(document.getElementById('set-year').value); await loadMonthLogs(); updateSidebar(); showToast('Month updated ✓', 2000, 'positive'); calViewMonth=S.month; calViewYear=S.year; }
-async function clearMonthData() {
-  if (!confirm('Clear ALL logged data for this month? Cannot be undone.')) return;
-  const from=dateKey(1,S.month,S.year); const to=dateKey(daysInMonth(S.month,S.year),S.month,S.year);
-  await sb.from('logs').delete().eq('user_id',currentUser.id).gte('date',from).lte('date',to);
-  S.days={}; showToast('Data cleared'); initToday(todayStr());
+async function saveGroqKey() {
+  const keyInput = document.getElementById('set-groq-key').value.trim();
+  S.groqKey = keyInput;
+  localStorage.setItem('vantage_groq_key', keyInput);
+  await saveUserSettings(); // This pushes it to Supabase meta
+  showToast('Groq Key synced to Command Center ✓', 2000, 'positive');
 }
 
 // ─── TEMPORAL REVIEWS & MODALS ────────────────────────────────────────────────
@@ -1738,7 +1766,9 @@ function checkExcuseRepetition(currentText) {
     alertEl.innerHTML=`<div style="background:#0d0000;border:1px solid var(--accent);border-radius:8px;padding:10px 14px;margin-bottom:10px"><div style="font-size:0.58rem;font-family:'Space Mono',monospace;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">Excuse Repetition Detected</div><div style="font-size:0.7rem;color:#fca5a5;line-height:1.5">You cited this same obstacle last month. Matching terms: <strong>${shared.slice(0,4).join(', ')}</strong>. What is your new approach?</div></div>`;
   } else { alertEl.innerHTML=''; }
 }
-
+// ─── OPERATOR TRIGGERS ────────────────────────────────────────────────────────
+function opTriggerWeekly() { S.lastWeeklyReview=null; showWeeklyReview(); }
+function opTriggerMonthly() { const now=new Date(); const mk=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0'); S.lastMonthlyRecap=null; showMonthlyAudit(mk); }
 async function showMonthlyAudit(monthKey) {
   const modal=document.getElementById('monthly-audit-modal'); modal.classList.remove('hidden'); document.getElementById('audit-close-btn').style.display='none'; auditGoTo(1);
   const [yr,mo]=monthKey.split('-').map(Number);
@@ -1766,3 +1796,125 @@ async function showMonthlyAudit(monthKey) {
   document.getElementById('audit-friction-history').innerHTML=frictionHistory.length?`
     <div style="font-size:0.56rem;font-family:'Space Mono',monospace;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Weekly Friction Points</div>
     ${frictionHistory.map((f,i)=>`<div style="background:var(--surface2);border-left:2px solid var(--accent);padding:8px 12px;border-radius:0 6px 6px 0;margin-bottom:6px"><div style="font-size:
+    0.56rem;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:3px">Week ${i+1}</div>
+        <div style="font-size:0.7rem;color:var(--text);line-height:1.5;font-style:italic">"${f}"</div>
+      </div>`).join('')}` : `<div style="font-size:0.7rem;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:12px;font-style:italic">No weekly friction points recorded.</div>`;
+  
+  const roiSelect=document.getElementById('audit-low-roi');
+  roiSelect.innerHTML='<option value="">— Select habit —</option>'+(S.habits||[]).map(h=>`<option value="${h}">${h}</option>`).join('');
+}
+
+async function submitMonthlyAudit() {
+  const delta=document.getElementById('audit-month-delta').value.trim();
+  const errEl=document.getElementById('audit-card5-err');
+  if (delta.length<10){errEl.textContent='Be specific. At least 10 characters.';document.getElementById('audit-month-delta').style.borderColor='var(--red)';return;}
+  errEl.textContent=''; document.getElementById('audit-month-delta').style.borderColor='';
+  
+  const now=new Date(); const monthKey=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+  const rootFail=document.getElementById('audit-root-failure').value.trim();
+  const lowRoi=document.getElementById('audit-low-roi').value;
+  
+  if (!S.monthlyAudits) S.monthlyAudits={};
+  S.monthlyAudits[monthKey]={
+    delusion:document.getElementById('audit-delusion').value.trim(),
+    rootFailure:rootFail,
+    lowRoiHabit:lowRoi,
+    trajectory:document.getElementById('audit-trajectory').value.trim(),
+    hardTruth:document.getElementById('audit-hard-truth').value.trim(),
+    monthDelta:delta,
+    savedAt:new Date().toISOString()
+  };
+  
+  S.monthDelta=delta;
+  if (rootFail.length>10) S.dailyFrictionQuestion=generateFrictionQuestion(rootFail);
+  if (lowRoi) S.pendingPruneHabit = lowRoi;
+  
+  S.goals=S.goals.filter(g=>!g._monthDelta);
+  const nextMoEnd=new Date(now.getFullYear(),now.getMonth()+2,0);
+  S.goals.unshift({id:'maudit-'+monthKey,name:delta,deadline:nextMoEnd.toISOString().split('T')[0],progress:0,type:'monthly',_monthDelta:true});
+  S.lastMonthlyRecap=monthKey;
+  
+  await saveUserSettings();
+  renderGoalsEditor(); renderWeeklyGoals(); initToday(todayStr()); injectDeltaAnchor();
+  
+  const closeBtn=document.getElementById('audit-close-btn');
+  closeBtn.style.display='block'; closeBtn.style.background='var(--accent)'; closeBtn.style.color='#000'; closeBtn.style.border='none';
+  showToast('Audit locked. Delta committed.', 2500, 'positive');
+}
+
+function generateFrictionQuestion(rf) {
+  const l=rf.toLowerCase();
+  if (l.includes('morning')||l.includes('schedule')||l.includes('time')) return 'Did you protect your first 2 hours today before opening your phone?';
+  if (l.includes('energy')||l.includes('night')||l.includes('sleep')) return 'Did you protect your sleep last night?';
+  if (l.includes('gym')||l.includes('train')||l.includes('workout')) return 'Did you set out your gear last night and block time today?';
+  if (l.includes('distract')||l.includes('phone')||l.includes('focus')) return 'Is your phone on DND and first 90 minutes of work blocked?';
+  return 'Did you take one concrete action against your root friction point today?';
+}
+
+function closeReviewModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+// ─── PRUNE & FRICTION INJECTIONS ──────────────────────────────────────────
+function checkPendingPrune() {
+  if (!S.pendingPruneHabit) return;
+  const modal = document.getElementById('prune-modal');
+  if (!modal) return;
+  document.getElementById('prune-habit-name').textContent = S.pendingPruneHabit;
+  modal.classList.remove('hidden');
+}
+
+async function resolvePrune(action) {
+  const habit = S.pendingPruneHabit;
+  if (!habit) return;
+  if (action === 'downgrade') {
+    S.habitStakes[habit] = 'low';
+    showToast(`▼ ${habit} downgraded to Maintenance weight.`, 3000, 'positive');
+  } else if (action === 'archive') {
+    const idx = S.habits.indexOf(habit);
+    if (idx !== -1) S.habits[idx] = 'New Habit';
+    delete S.habitStakes[habit];
+    S.habitStakes['New Habit'] = 'medium';
+    showToast(`✕ ${habit} archived. Slot replaced.`, 3000, 'positive');
+  }
+  S.pendingPruneHabit = null;
+  await saveUserSettings();
+  document.getElementById('prune-modal').classList.add('hidden');
+  initToday(todayStr());
+  renderGoalsEditor();
+}
+
+function injectDailyFrictionQuestion() {
+  const existing = document.getElementById('daily-friction-q');
+  if (existing) existing.remove();
+  if (!S.dailyFrictionQuestion) return;
+  const el = document.createElement('div');
+  el.id = 'daily-friction-q';
+  el.innerHTML=`
+    <div style="font-size:0.55rem;font-family:'Space Mono',monospace;color:var(--yellow);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px">Daily Friction Check</div>
+    <div style="font-size:0.78rem;color:var(--text);line-height:1.55;margin-bottom:8px">${S.dailyFrictionQuestion}</div>
+    <div style="display:flex;gap:8px">
+      <button onclick="logFrictionAnswer(true,this)" style="background:#081a08;border:1px solid var(--green);color:var(--green);border-radius:6px;padding:5px 14px;font-family:'Space Mono',monospace;font-size:0.65rem;cursor:pointer">Yes</button>
+      <button onclick="logFrictionAnswer(false,this)" style="background:#0d0000;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:5px 14px;font-family:'Space Mono',monospace;font-size:0.65rem;cursor:pointer">No</button>
+    </div>`;
+  const target = document.getElementById('wnn-card') || document.getElementById('weekly-goals-card');
+  if (target) target.parentNode.insertBefore(el, target);
+}
+
+function logFrictionAnswer(yes, btn) {
+  btn.parentElement.querySelectorAll('button').forEach(b => b.style.opacity='0.4');
+  btn.style.opacity='1'; btn.style.fontWeight='700';
+  if (!yes) showToast('Friction unresolved. Address it before tonight.', 3000, 'negative');
+}
+
+function injectDeltaAnchor() {
+  const existing = document.getElementById('delta-anchor-bar');
+  if (existing) existing.remove();
+  if (!S.monthDelta) return;
+  const bar = document.createElement('div');
+  bar.id = 'delta-anchor-bar';
+  bar.innerHTML=`<span style="color:var(--accent);font-weight:700;flex-shrink:0;font-family:'Space Mono',monospace">MONTHLY DELTA:</span><span style="font-style:italic;opacity:0.8">${S.monthDelta}</span>`;
+  const main = document.querySelector('.main');
+  if (main) main.insertBefore(bar, main.firstChild);
+}
+</script>
+</body>
+</html>
