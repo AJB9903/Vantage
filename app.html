@@ -326,7 +326,7 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
 
 <div id="app">
   <aside class="sidebar">
-    <div class="logo">
+    <div class="logo" onclick="showPage('today')" style="cursor:pointer" title="Back to Dashboard">
       <div class="logo-mark">Personal OS</div>
       <div class="logo-text">VANTAGE<span>.</span></div>
     </div>
@@ -539,7 +539,7 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
       <div class="settings-section">
         <div class="settings-title">Groq API Key (Free AI)</div>
         <p style="font-size:0.73rem;color:var(--muted);margin-bottom:10px;line-height:1.6">Get a free key at <strong style="color:var(--text)">console.groq.com</strong>.</p>
-        <input type="password" class="inp" id="set-groq-key" placeholder="gsk_..."/>
+        <input type="text" class="inp" id="set-groq-key" placeholder="gsk_..." autocomplete="off" spellcheck="false" data-lpignore="true" style="-webkit-text-security: disc;"/>
         <div style="margin-top:10px"><button class="save-btn" onclick="saveGroqKey()">Save Key</button></div>
       </div>
       
