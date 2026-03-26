@@ -1867,9 +1867,12 @@ async function submitWeeklyRecap() {
   S.goals=S.goals.filter(g=>!g._weeklyDelta);
   const nextSunday=new Date(); nextSunday.setDate(nextSunday.getDate()+(7-nextSunday.getDay()));
   S.goals.unshift({id:'wdelta-'+weekKey,name:delta,deadline:nextSunday.toISOString().split('T')[0],progress:0,type:'weekly',_weeklyDelta:true});
-  await saveUserSettings(); renderWeeklyGoals(); renderGoalsEditor(); initToday(todayStr());
-  const closeBtn=document.getElementById('recap-close-btn'); closeBtn.style.display='block';
-  showToast('Recap locked.', 2500, 'positive');
+  await saveUserSettings();
+  renderWeeklyGoals();
+  renderGoalsEditor();
+  initToday(todayStr());
+  document.getElementById('weekly-review-modal').classList.add('hidden');
+  showToast('Weekly recap locked. Delta injected into objectives.', 2500, 'positive');
 }
 
 async function showWeeklyReview() {
