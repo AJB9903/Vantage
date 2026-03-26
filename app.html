@@ -738,7 +738,27 @@ body::before { content: ''; position: fixed; inset: 0; background-image: url("da
 const SUPA_URL = 'https://eqzcdcdnddjufuwmwbml.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxemNkY2RuZGRqdWZ1d213Ym1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTM1NzEsImV4cCI6MjA4OTg2OTU3MX0.cGBJxtuReOrU7_jz6Na-zhgR92nGIYJVgno22vqjqDA';
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+// --- PASTE THIS AT THE TOP OF THE SCRIPT IN app.html ---
+async function authGuard() {
+  const { data: { session } } = await sb.auth.getSession();
+  
+  // Check for the specific access flags
+  const hasAccess = localStorage.getItem('vantage_access') === 'operator' || 
+                    localStorage.getItem('vantage_access') === 'purchased';
+  
+  // THE CURE: Only show the app if BOTH a session and the access flag exist.
+  if (session && hasAccess) {
+    document.getElementById('app').classList.add('visible');
+    console.log("Access Verified.");
+  } else {
+    // If one is missing, redirect to showcase and STOP the loop.
+    window.location.href = 'showcase.html';
+  }
+}
 
+// Run the check immediately
+authGuard();
+  
 const HABIT_WEIGHTS = { critical: 3.0, high: 3.0, medium: 1.0, low: 0.5 };
 const STAKES = {
   low:      { label: 'LOW',  cls: 'stake-low'  },
@@ -793,41 +813,30 @@ async function checkAccessLocal() {
   return !!access;
 }
 
-(async () => {
-  try {
-    if (!checkAccessLocal()) {
-      window.location.href = 'showcase.html';
-      return;
-    }
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session?.user) {
-      document.getElementById('auth-screen').style.display = 'flex';
-      document.getElementById('app').classList.remove('visible');
-    } else {
-      currentUser = session.user;
-      
-      const access = localStorage.getItem('vantage_access');
-      let hasAccess = (access === 'operator' || access === 'purchased');
-      if (!hasAccess) {
-        try {
-          const { data } = await sb.from('user_settings').select('has_access').eq('user_id', currentUser.id).single();
-          hasAccess = data && data.has_access;
-        } catch(e) {}
-      }
-      
-      if (!hasAccess) {
-        window.location.href = 'showcase.html';
-        return;
-      }
-      await initApp();
-    }
-    document.getElementById('auth-password').addEventListener('keydown', e => { if(e.key==='Enter') handleAuth(); });
-    document.getElementById('auth-email').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('auth-password').focus(); });
-  } catch(e) {
-    console.error('Boot error:', e);
+async function authGuard() {
+  const { data: { session } } = await sb.auth.getSession();
+  
+  // Check both the browser flag and the Supabase session
+  const access = localStorage.getItem('vantage_access');
+  const hasAccess = (access === 'operator' || access === 'purchased');
+  
+  if (session && hasAccess) {
+    // SUCCESS: Initialize the app
+    currentUser = session.user;
+    document.getElementById('app').classList.add('visible');
+    await initApp();
+    
+    // Re-bind the login listeners if the auth screen is still in DOM
+    const authPw = document.getElementById('auth-password');
+    if(authPw) authPw.addEventListener('keydown', e => { if(e.key==='Enter') handleAuth(); });
+  } else {
+    // FAIL: Stop the loop and stay on showcase
     window.location.href = 'showcase.html';
   }
-})();
+}
+
+// Execute the guard
+authGuard();
 
 function switchAuthTab(mode) {
   authMode = mode;
