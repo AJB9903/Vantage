@@ -6,158 +6,420 @@
 <title>VANTAGE. | Personal OS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-  /* RESET & ARCHITECTURAL ROOT */
+  /* ── RESET & ROOT ── */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   :root {
-    --black: #000000; --surface: #0a0a0a; --card: #111111;
-    --border: #1a1a1a; --white: #ffffff; --muted: #666666;
-    --accent: #dfff00; --blue: #38bdf8; --red: #ff4d4d; --green: #4ade80;
+    --black:    #000000;
+    --surface:  #0a0a0a;
+    --card:     #111111;
+    --border:   #262626;
+    --white:    #ffffff;
+    --muted:    #a3a3a3;
+    --accent:   #dfff00;
+    --blue:     #38bdf8;
+    --red:      #f87171;
+    --green:    #4ade80;
   }
+
+  html { scroll-behavior: smooth; }
 
   body {
-    background: var(--black); color: var(--white); font-family: 'Syne', sans-serif;
-    overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
   }
 
-  /* CUSTOM NAVIGATION */
-  nav {
-    position: fixed; top: 0; width: 100%; z-index: 1000;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 24px 48px; backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
-  }
-  .nav-logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -1px; }
-  .nav-logo span { color: var(--accent); }
-  .nav-op { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 2px; color: var(--muted); text-decoration: none; transition: .2s; }
-  .nav-op:hover { color: var(--accent); }
+  a, button, input, select, textarea, .interactive { cursor: none; }
 
-  /* HERO SECTION */
-  #hero {
-    min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
-    padding: 0 48px; padding-top: 100px;
+  /* ── CUSTOM CURSOR ── */
+  .cursor {
+    position: fixed; z-index: 9999; pointer-events: none;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent); mix-blend-mode: difference;
+    transform: translate(-50%,-50%);
+    transition: transform .1s ease;
   }
-  .hero-eyebrow { font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 4px; color: var(--accent); margin-bottom: 24px; display: flex; align-items: center; gap: 16px; }
-  .hero-eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--accent); }
-  .hero-headline { font-size: clamp(3.5rem, 10vw, 7.5rem); font-weight: 800; line-height: 0.85; letter-spacing: -4px; margin-bottom: 32px; }
-  .hero-headline em { font-style: italic; color: var(--accent); }
-  .hero-sub { max-width: 460px; font-size: 1.1rem; line-height: 1.6; color: var(--muted); margin-bottom: 40px; }
-
-  .btn-primary { 
-    background: var(--accent); color: var(--black); padding: 20px 40px; 
-    font-family: 'Space Mono', monospace; font-weight: 700; text-transform: uppercase;
-    text-decoration: none; letter-spacing: 2px; border-radius: 4px; transition: .3s;
-    display: inline-block;
+  .cursor-ring {
+    position: fixed; z-index: 9998; pointer-events: none;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid rgba(223, 255, 0, 0.4);
+    transform: translate(-50%,-50%);
+    transition: transform .15s ease, width .2s ease, height .2s ease, opacity .3s ease;
   }
-  .btn-primary:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(223, 255, 0, 0.2); }
-
-  /* INTERACTIVE SYSTEM PREVIEW */
-  #preview { padding: 120px 48px; }
-  .preview-container {
-    background: var(--surface); border: 1px solid var(--border);
-    display: grid; grid-template-columns: 240px 1fr; border-radius: 8px;
-    min-height: 550px; overflow: hidden;
-  }
-  .p-sidebar { border-right: 1px solid var(--border); padding: 32px 0; }
-  .p-nav-item { 
-    padding: 12px 32px; font-family: 'Space Mono', monospace; font-size: 0.65rem; 
-    color: var(--muted); cursor: pointer; text-transform: uppercase; letter-spacing: 2px;
-  }
-  .p-nav-item.active { color: var(--accent); border-left: 2px solid var(--accent); background: rgba(223,255,0,0.05); }
   
-  .p-main { padding: 48px; position: relative; }
-  .p-header { display: flex; justify-content: space-between; margin-bottom: 40px; align-items: flex-end; }
-  .p-title { font-size: 3rem; font-weight: 800; letter-spacing: -2px; }
-  .p-card { background: var(--black); border: 1px solid var(--border); padding: 24px; border-radius: 4px; }
+  .hovering .cursor { transform: translate(-50%,-50%) scale(0.5); }
+  .hovering .cursor-ring { width: 50px; height: 50px; border-color: var(--accent); background: rgba(223, 255, 0, 0.05); }
 
-  /* SYSTEM EVOLUTION (BETA TRANSPARENCY) */
-  #evolution { padding: 120px 48px; border-top: 1px solid var(--border); }
-  .timeline { position: relative; margin-top: 60px; padding-left: 32px; border-left: 1px solid var(--border); }
-  .time-step { margin-bottom: 50px; position: relative; }
-  .time-step::before { content: ''; position: absolute; left: -37px; top: 10px; width: 10px; height: 10px; background: var(--accent); }
-  .time-status { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+  /* ── GRID NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
 
-  /* MOBILE OPTIMIZATION */
-  @media (max-width: 900px) {
-    nav { padding: 20px; }
-    #hero, #preview, #evolution { padding: 80px 24px; }
-    .hero-headline { font-size: 3.5rem; letter-spacing: -2px; }
-    .preview-container { grid-template-columns: 1fr; height: auto; }
-    .p-sidebar { display: flex; overflow-x: auto; padding: 12px; border-right: none; border-bottom: 1px solid var(--border); }
-    .p-nav-item { border-left: none; padding: 10px 20px; white-space: nowrap; }
-    .p-nav-item.active { border-bottom: 2px solid var(--accent); }
-    .p-main { padding: 24px; }
-    .p-title { font-size: 2.2rem; }
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 56px;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
+    backdrop-filter: blur(4px);
+  }
+  .nav-logo { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -1px; color: var(--white); }
+  .nav-logo span { color: var(--accent); }
+  .nav-op { font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .25s; }
+  .nav-op:hover { color: var(--white); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 56px; padding-top: 80px; overflow: hidden; z-index: 1;
+  }
+  .hero-eyebrow { font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 32px; display: flex; align-items: center; gap: 16px; opacity: 0; animation: fadeUp .8s ease forwards .2s; }
+  .hero-eyebrow::before { content: ''; display: block; width: 48px; height: 1px; background: var(--accent); }
+  .hero-headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(4rem, 8vw, 8.5rem); font-weight: 300; line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 40px; opacity: 0; animation: fadeUp .9s ease forwards .4s; }
+  .hero-headline em { font-style: italic; color: var(--accent); }
+  .hero-sub { max-width: 440px; font-size: 1rem; line-height: 1.7; color: var(--muted); margin-bottom: 48px; opacity: 0; animation: fadeUp .9s ease forwards .6s; }
+  .hero-actions { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; opacity: 0; animation: fadeUp .9s ease forwards .8s; }
+
+  .btn-primary { background: var(--accent); color: var(--black); font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 800; padding: 16px 36px; border-radius: 8px; text-decoration: none; transition: all .25s; box-shadow: 0 4px 20px rgba(223, 255, 0, 0.15); }
+  .btn-primary:hover { background: #e8ff2a; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(223, 255, 0, 0.25); }
+  .btn-ghost { font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-decoration: none; display: flex; align-items: center; gap: 12px; transition: color .25s; font-weight: 700; }
+  .btn-ghost::after { content: '↓'; font-size: 1rem; color: var(--accent); transition: transform .25s; }
+  .btn-ghost:hover { color: var(--white); }
+
+  .hero-terminal { position: absolute; right: 56px; top: 50%; transform: translateY(-50%); width: 480px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.8); opacity: 0; animation: fadeLeft 1s ease forwards 1s; }
+  .terminal-bar { background: var(--surface); padding: 14px 20px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .terminal-label { margin-left: auto; font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+  .terminal-body { padding: 28px; font-family: 'Space Mono', monospace; font-size: 0.68rem; line-height: 2; }
+  .t-prompt { color: var(--accent); font-weight: 700; }
+  .t-success { color: var(--green); }
+  .t-cursor { display: inline-block; width: 8px; height: 14px; background: var(--accent); vertical-align: middle; animation: blink 1s step-end infinite; }
+
+  /* ── DASHBOARD PREVIEW ── */
+  #preview { padding: 120px 56px; }
+  .section-label { font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); margin-bottom: 56px; display: flex; align-items: center; gap: 20px; }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .preview-wrapper { position: relative; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; box-shadow: 0 40px 100px rgba(223, 255, 0, 0.05); background: var(--black); }
+  .preview-topbar { background: var(--surface); padding: 16px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+  .preview-url { flex: 1; background: var(--black); border: 1px solid var(--border); border-radius: 2px; padding: 10px 16px; margin: 0 20px; text-align: center; font-family: 'Space Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+
+  .dashboard { display: grid; grid-template-columns: 240px 1fr 280px; min-height: 500px; }
+  .dash-sidebar { border-right: 1px solid var(--border); padding: 24px 0; background: var(--black); }
+  .dash-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 300; color: var(--white); padding: 0 24px 28px; border-bottom: 1px solid var(--border); margin-bottom: 16px; letter-spacing: -1px;}
+  .dash-logo span { color: var(--accent); }
+  .dash-nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 24px; font-size: 0.65rem; font-weight: 700; color: var(--muted); font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 2px;}
+  .dash-nav-item.active { color: var(--accent); background: rgba(223,255,0,0.05); border-left: 2px solid var(--accent); }
+  .dash-main { padding: 48px; }
+  .dash-greeting { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; font-weight: 300; margin-bottom: 6px; line-height: 1; letter-spacing: -2px;}
+  .dash-date { font-family: 'Space Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 48px; }
+  .dash-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; }
+  .dash-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 24px; }
+  .dash-stat-val { font-family: 'Syne', sans-serif; font-size: 2.5rem; font-weight: 800; color: var(--text); line-height: 1; letter-spacing: -1px;}
+  .dash-stat-label { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 16px; font-weight: 700;}
+  .dash-task-header { font-family: 'Space Mono', monospace; font-size: 0.55rem; font-weight: 700; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);}
+  .dash-task { display: flex; align-items: center; gap: 12px; padding: 14px 16px; font-size: 0.85rem; color: var(--muted); font-weight: 600; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 8px;}
+  .task-check { width: 16px; height: 16px; border-radius: 2px; border: 1px solid var(--muted); flex-shrink: 0; display: grid; place-items: center; font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700; color: var(--black);}
+  .task-check.done { background: var(--accent); border-color: var(--accent); }
+  .task-check.done::after { content: '+'; }
+  .dash-right { border-left: 1px solid var(--border); padding: 32px 24px; background: var(--black); }
+  .dash-widget-title { font-family: 'Space Mono', monospace; font-size: 0.55rem; font-weight: 700; color: var(--accent); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+  .dash-habit { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; font-size: 0.75rem; font-weight: 600;}
+  .habit-bar { width: 90px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;}
+  .habit-fill { height: 100%; border-radius: 2px; background: var(--accent); }
+  .focus-block { background: var(--black); border: 1px solid var(--border); border-radius: 4px; padding: 24px; margin-top: 32px;}
+  .focus-label { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--blue); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px; font-weight: 700;}
+  .focus-text { font-size: 0.85rem; line-height: 1.8; color: var(--text); }
+
+  /* ── FEATURES & ROADMAP ── */
+  #features { padding: 120px 56px; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .features-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 80px; }
+  .features-headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(3rem, 4.5vw, 5rem); font-weight: 300; line-height: 1.05; letter-spacing: -0.02em; }
+  .features-headline em { font-style: italic; color: var(--accent); }
+  .features-body { font-size: 0.95rem; line-height: 1.8; color: var(--muted); }
+  .features-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; }
+  .feature-item { padding: 56px 0; border-bottom: 1px solid var(--border); display: flex; gap: 28px; align-items: flex-start; }
+  .feature-item:nth-child(odd) { padding-right: 60px; border-right: 1px solid var(--border); }
+  .feature-item:nth-child(even) { padding-left: 60px; }
+  .feature-num { font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700; color: var(--accent); padding-top: 6px; letter-spacing: 2px; flex-shrink: 0; }
+  .feature-content h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
+  .feature-content p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── PHILOSOPHY ── */
+  #philosophy { padding: 160px 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
+  .philosophy-quote { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 4vw, 4rem); font-weight: 300; line-height: 1.1; color: var(--white); }
+  .philosophy-quote em { color: var(--accent); font-style: italic; }
+  .phil-attr { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 0.65rem; color: var(--muted); letter-spacing: 3px; margin-top: 40px; display: flex; align-items: center; gap: 16px; text-transform: uppercase; }
+  .phil-attr::before { content: ''; width: 30px; height: 1px; background: var(--accent); }
+  .phil-blocks { display: flex; flex-direction: column; gap: 24px; }
+  .phil-block { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 36px; transition: border-color .3s, transform .3s; }
+  .phil-block:hover { border-color: rgba(223,255,0,0.3); transform: translateX(-4px); }
+  .phil-block h4 { font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+  .phil-block p { font-size: 0.88rem; color: var(--muted); line-height: 1.7; }
+
+  /* ── CTA ── */
+  #cta { padding: 160px 56px; text-align: center; position: relative; overflow: hidden; border-top: 1px solid var(--border); background: var(--surface); }
+  #cta::before { content: ''; position: absolute; bottom: -50%; left: 50%; transform: translateX(-50%); width: 800px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(223,255,0,0.05) 0%, transparent 70%); pointer-events: none; }
+  .cta-tag { font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--muted); margin-bottom: 32px; display: block; }
+  .cta-headline { font-family: 'Cormorant Garamond', serif; font-size: clamp(3.5rem, 6vw, 6.5rem); font-weight: 300; line-height: 1; margin-bottom: 24px; letter-spacing: -0.02em; }
+  .cta-headline em { font-style: italic; color: var(--accent); }
+  .cta-sub { font-size: 0.95rem; color: var(--muted); line-height: 1.8; max-width: 480px; margin: 0 auto 48px; }
+  .cta-buy-btn { display: inline-flex; align-items: center; justify-content: center; gap: 12px; background: var(--accent); color: #000; font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: -0.3px; padding: 20px 48px; border-radius: 12px; text-decoration: none; border: none; transition: all .2s; box-shadow: 0 8px 32px rgba(223, 255, 0, 0.2); }
+  .cta-buy-btn:hover { background: #e8ff2a; transform: translateY(-3px); box-shadow: 0 12px 48px rgba(223, 255, 0, 0.3); }
+
+  /* ── FOOTER ── */
+  footer { border-top: 1px solid var(--border); padding: 48px 56px; display: flex; align-items: center; justify-content: space-between; background: var(--black); position: relative; z-index: 10; }
+  .footer-logo { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 800; letter-spacing: -1px; }
+  .footer-logo span { color: var(--accent); }
+  .footer-links { display: flex; gap: 36px; list-style: none; }
+  .footer-links a { font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .25s; }
+  .footer-links a:hover { color: var(--white); }
+  .footer-copy { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ANIMATIONS */
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeLeft { from { opacity: 0; transform: translateY(-50%) translateX(40px); } to { opacity: 1; transform: translateY(-50%) translateX(0); } }
+  @keyframes blink { 0%,100% {opacity:1} 50% {opacity:0} }
+
+  @media(max-width: 900px) {
+    nav, #hero, #preview, #features, #philosophy, #cta, footer { padding-left: 24px; padding-right: 24px; }
+    .hero-terminal { position: relative; right: auto; top: auto; transform: none; width: 100%; margin-top: 60px; opacity: 1; animation: none; }
+    .features-header { grid-template-columns: 1fr; gap: 24px; margin-bottom: 40px; }
+    .features-list { grid-template-columns: 1fr; }
+    .feature-item:nth-child(odd) { padding-right: 0; border-right: none; }
+    .feature-item:nth-child(even) { padding-left: 0; }
+    #philosophy { grid-template-columns: 1fr; gap: 60px; }
+    .dashboard { grid-template-columns: 1fr; }
+    .dash-sidebar, .dash-right { display: none; }
+    footer { flex-direction: column; gap: 24px; }
   }
 </style>
 </head>
 <body>
 
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
 <nav>
   <div class="nav-logo">VANTAGE<span>.</span></div>
-  <a href="#" class="nav-op" onclick="operatorLogin()">OPERATOR ACCESS</a>
+  <a href="#" class="nav-op interactive" onclick="operatorLogin()">Operator Access</a>
 </nav>
 
 <section id="hero">
-  <div class="hero-eyebrow">PERSONAL OPERATING SYSTEM</div>
+  <div class="hero-eyebrow">Personal Operating System</div>
   <h1 class="hero-headline">Your life<br/><em>architected.</em></h1>
-  <p class="hero-sub">The command center for high stakes individuals. Optimize your cognitive load and track your trajectory with absolute precision.</p>
-  <div><a href="#" class="btn-primary" onclick="handlePurchase()">Access System — $6.99</a></div>
+  <p class="hero-sub">VANTAGE is the command center for exceptional people — a unified personal OS that transforms how you think, plan, and execute every single day.</p>
+  <div class="hero-actions">
+    <a href="#" class="btn-primary interactive" onclick="handlePurchase();return false;">Get Access — $6.99</a>
+    <a href="#preview" class="btn-ghost interactive">See it in action</a>
+  </div>
+
+  <div class="hero-terminal">
+    <div class="terminal-bar">
+      <div class="t-dot" style="background:#ff5f57"></div>
+      <div class="t-dot" style="background:#febc2e"></div>
+      <div class="t-dot" style="background:#28c840"></div>
+      <span class="terminal-label">vantage — sys</span>
+    </div>
+    <div class="terminal-body">
+      <div><span class="t-prompt">▸ </span><span class="t-cmd">vantage init --user="Operator"</span></div>
+      <div class="t-output">Calibrating cognitive profile...</div>
+      <div class="t-output t-success">✓ Habit stack loaded</div>
+      <div class="t-output t-success">✓ Weekly non-negotiables set</div>
+      <div class="t-output t-success">✓ Groq AI neural link established</div>
+      <br/>
+      <div><span class="t-prompt">▸ </span><span class="t-cmd">vantage status</span></div>
+      <div class="t-output">Execution Score: <span style="color:var(--accent)">94%</span></div>
+      <div class="t-output">Trajectory: <span style="color:var(--accent)">Compounding</span></div>
+      <br/>
+      <div><span class="t-prompt">▸ </span><span class="t-cmd"><span class="t-cursor"></span></span></div>
+    </div>
+  </div>
 </section>
 
 <section id="preview">
-  <div style="font-family:'Space Mono'; color:var(--muted); font-size:0.6rem; letter-spacing:4px; margin-bottom:48px;">01 // SYSTEM PREVIEW</div>
-  <div class="preview-container">
-    <div class="p-sidebar">
-      <div class="p-nav-item active" onclick="updatePreview('execute', this)">Execute</div>
-      <div class="p-nav-item" onclick="updatePreview('trajectory', this)">Trajectory</div>
-      <div class="p-nav-item" onclick="updatePreview('diagnostics', this)">Diagnostics</div>
+  <div class="section-label reveal">System Preview</div>
+  <div class="preview-wrapper reveal">
+    <div class="preview-topbar">
+      <div class="preview-url">app.vantage.os / execute</div>
     </div>
-    <div class="p-main" id="p-content">
-      <div class="p-header">
-        <h2 class="p-title">Execute.</h2>
-        <div style="text-align:right"><div style="font-size:2rem; font-weight:800; color:var(--accent)">94%</div><div style="font-family:'Space Mono'; font-size:0.5rem; color:var(--muted);">DAILY SCORE</div></div>
+    <div class="dashboard">
+      <div class="dash-sidebar">
+        <div class="dash-logo">VANTAGE<span>.</span></div>
+        <div class="dash-nav-item active">⬡ Execute</div>
+        <div class="dash-nav-item">◈ Trajectory</div>
+        <div class="dash-nav-item">◎ Chronology</div>
+        <div class="dash-nav-item">◇ Outputs</div>
+        <div class="dash-nav-item" style="margin-top:24px">◉ System</div>
       </div>
-      <div class="p-card">
-        <div style="font-family:'Space Mono'; font-size:0.55rem; color:var(--muted); margin-bottom:16px;">DAILY DIRECTIVES</div>
-        <div style="display:flex; justify-content:space-between; margin-bottom:12px; opacity:0.6;"><span>Morning Protocol</span><span style="color:var(--accent)">HIGH</span></div>
-        <div style="display:flex; justify-content:space-between;"><span>Deep Work Block</span><span style="color:var(--red)">CRIT</span></div>
+      <div class="dash-main">
+        <div class="dash-greeting">Execute<span>.</span></div>
+        <div class="dash-date">WEDNESDAY . 25 MARCH</div>
+        <div class="dash-stats">
+          <div class="dash-stat">
+            <div class="dash-stat-val">94%</div>
+            <div class="dash-stat-label">System Score</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-val">47</div>
+            <div class="dash-stat-label">Day Streak</div>
+          </div>
+          <div class="dash-stat">
+            <div class="dash-stat-val">169</div>
+            <div class="dash-stat-label">Morning Mass</div>
+          </div>
+        </div>
+        <div class="dash-task-header">Daily Directives</div>
+        <div class="dash-task">
+          <div class="task-check done"></div>
+          <span style="color:var(--muted); text-decoration:line-through;">Morning protocol</span>
+          <span class="task-tag" style="color:#fb923c; border-color:#fb923c;">HIGH</span>
+        </div>
+        <div class="dash-task">
+          <div class="task-check"></div>
+          Deep work block [Q2 Strategy]
+          <span class="task-tag" style="color:var(--red); border-color:var(--red);">CRIT</span>
+        </div>
+      </div>
+      <div class="dash-right">
+        <div class="dash-widget-title">Consistency</div>
+        <div class="dash-habit">
+          <span>Sleep Protocol</span>
+          <div class="habit-bar"><div class="habit-fill" style="width:88%"></div></div>
+        </div>
+        <div class="dash-habit">
+          <span>Physical Training</span>
+          <div class="habit-bar"><div class="habit-fill" style="width:100%"></div></div>
+        </div>
+        <div class="focus-block">
+          <div class="focus-label">AI Site Report</div>
+          <div class="focus-text">Strong momentum. 2 critical directives cleared. Protect your shutdown sequence tonight.</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="evolution">
-  <div style="font-family:'Space Mono'; color:var(--muted); font-size:0.6rem; letter-spacing:4px; margin-bottom:48px;">02 // SYSTEM EVOLUTION</div>
-  <div class="timeline">
-    <div class="time-step">
-      <div class="time-status">[ SHIPPED ]</div>
-      <h3 style="font-weight:700; margin-bottom:8px;">Core Architecture</h3>
-      <p style="color:var(--muted); font-size:0.9rem;">Stake weighted habit algorithms and primary performance dashboard.</p>
+<section id="features">
+  <div class="section-label reveal">What's Inside</div>
+  <div class="features-header reveal">
+    <h2 class="features-headline">Every tool you need.<br/><em>Nothing you don't.</em></h2>
+    <p class="features-body">VANTAGE isn't another productivity app. It's a localized operating system — purpose-built for people who refuse to leave their potential untouched.</p>
+  </div>
+  <div class="features-list reveal">
+    <div class="feature-item">
+      <span class="feature-num">01</span>
+      <div class="feature-content">
+        <h3>Stake-Weighted Habits</h3>
+        <p>Not all habits are equal. Assign stakes to calculate an Execution Score that actually reflects your effort.</p>
+      </div>
     </div>
-    <div class="time-step">
-      <div class="time-status">[ SHIPPED ]</div>
-      <h3 style="font-weight:700; margin-bottom:8px;">Neural Integration</h3>
-      <p style="color:var(--muted); font-size:0.9rem;">Groq AI integration for daily site reports and end of day diagnostics.</p>
+    <div class="feature-item">
+      <span class="feature-num">02</span>
+      <div class="feature-content">
+        <h3>Daily AI Briefings</h3>
+        <p>Plug in a Groq API key and receive personalized morning briefings and end-of-day feedback diagnosing friction.</p>
+      </div>
     </div>
-    <div class="time-step">
-      <div class="time-status">[ ACTIVE ]</div>
-      <h3 style="font-weight:700; margin-bottom:8px;">Mobile Restructure</h3>
-      <p style="color:var(--muted); font-size:0.9rem;">Fluid UI overhaul for iPhone hardware and tactile operational use.</p>
+    <div class="feature-item">
+      <span class="feature-num">03</span>
+      <div class="feature-content">
+        <h3>Weekly Diagnostics</h3>
+        <p>Sunday reviews that calculate opportunity costs and force you to set a non-negotiable delta for the week ahead.</p>
+      </div>
     </div>
-    <div class="time-step">
-      <div class="time-status">[ PLANNED ]</div>
-      <h3 style="font-weight:700; margin-bottom:8px;">Native Sync</h3>
-      <p style="color:var(--muted); font-size:0.9rem;">Offline state persistence and cross-platform terminal notifications.</p>
+    <div class="feature-item">
+      <span class="feature-num">04</span>
+      <div class="feature-content">
+        <h3>Trajectory Audits</h3>
+        <p>Monthly resets that force you to confront the "Delusion Gap" between your intentions and your measured output.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<footer style="padding: 60px 48px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-  <div class="nav-logo">VANTAGE<span>.</span></div>
-  <div style="font-family:'Space Mono'; font-size:0.55rem; color:var(--muted);">© 2026 ALL RIGHTS RESERVED</div>
+<section id="philosophy">
+  <div class="reveal">
+    <blockquote class="philosophy-quote">"The quality of your life is a direct reflection of the quality of your <em>systems.</em>"</blockquote>
+    <div class="phil-attr">VANTAGE Founding Principle</div>
+  </div>
+  <div class="phil-blocks reveal">
+    <div class="phil-block">
+      <h4>Built on First Principles</h4>
+      <p>We studied the routines of 1,000+ high performers. VANTAGE is the distillation of what actually works — built for reality.</p>
+    </div>
+    <div class="phil-block">
+      <h4>Designed for Depth</h4>
+      <p>VANTAGE optimizes for depth. We believe slow, deliberate growth compounds into extraordinary outcomes.</p>
+    </div>
+    <div class="phil-block">
+      <h4>Your Data, Your OS</h4>
+      <p>Everything stays private. VANTAGE never monetizes your behavior — your personal operating system is yours alone.</p>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap" style="padding: 140px 56px; border-top: 1px solid var(--border); background: var(--black);">
+  <div class="section-label reveal">Beta Transparency</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;" class="reveal">
+    <div>
+      <h2 style="font-family: 'Cormorant Garamond', serif; font-size: clamp(2.5rem, 4vw, 4.5rem); font-weight: 300; line-height: 1.1; margin-bottom: 24px;">Built in public.<br/><em>Priced for early believers.</em></h2>
+      <p style="font-size: 0.95rem; line-height: 1.8; color: var(--muted); margin-bottom: 32px; max-width: 440px;">Everyone who enters the system now locks in lifetime access before subscription pricing initiates.</p>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; gap: 16px; align-items: flex-start;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700; color: var(--accent); padding-top: 4px; letter-spacing: 1px;">[ LOCKED ]</span>
+          <span style="font-size: 0.85rem; color: var(--text);">Your $6.99 price is locked permanently. No price increases, ever.</span>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: flex-start;">
+          <span style="font-family: 'Space Mono', monospace; font-size: 0.6rem; font-weight: 700; color: var(--accent); padding-top: 4px; letter-spacing: 1px;">[ DIRECT ]</span>
+          <span style="font-size: 0.85rem; color: var(--text);">Feature requests route directly to the builder. Your vote counts.</span>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+      <div style="font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); font-weight: 700;">What is shipped . What is next</div>
+      <div style="font-size:0.85rem; line-height:2; color:var(--muted)">
+        <span style="color:var(--accent)">[ SHIPPED ]</span> Daily Habit Tracker<br>
+        <span style="color:var(--accent)">[ SHIPPED ]</span> AI Diagnostics & Reports<br>
+        <span style="color:var(--accent)">[ SHIPPED ]</span> Audits & Heatmaps<br>
+        <span style="color:var(--white)">[ ACTIVE ]</span> Mobile Restructure<br>
+        <span style="color:var(--muted)">[ PLANNED ]</span> iOS Native App
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <span class="cta-tag">Begin Now</span>
+  <h2 class="cta-headline reveal">Take the<br/><em>vantage point.</em></h2>
+  <p class="cta-sub reveal">Join the operators building their Personal OS. Early access is open.</p>
+  <div class="reveal">
+    <button class="cta-buy-btn interactive" onclick="handlePurchase()">Get Access — $6.99</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">VANTAGE<span>.</span></div>
+  <ul class="footer-links">
+    <li><a href="#" class="interactive">Privacy</a></li>
+    <li><a href="#" class="interactive">Terms</a></li>
+    <li><a href="#" class="interactive">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2026 VANTAGE. All rights reserved.</div>
 </footer>
 
 <script>
@@ -165,38 +427,54 @@
   const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxemNkY2RuZGRqdWZ1d213Ym1sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyOTM1NzEsImV4cCI6MjA4OTg2OTU3MX0.cGBJxtuReOrU7_jz6Na-zhgR92nGIYJVgno22vqjqDA';
   const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-  // AUTH GUARD PREVENTS REDIRECT LOOPS
   window.onload = async () => {
-    const { data: { session } } = await sb.auth.getSession();
-    const access = localStorage.getItem('vantage_access');
-    if (session && (access === 'operator' || access === 'purchased')) {
-      window.location.href = 'app.html';
-    }
-  };
+  const { data: { session } } = await sb.auth.getSession();
+  const access = localStorage.getItem('vantage_access');
+  
+  // ONLY redirect to the app if they have an active session AND the access flag.
+  // This prevents the "jumping" if they are signed in but haven't paid/entered a code.
+  if (session && (access === 'operator' || access === 'purchased')) {
+    window.location.href = 'app.html';
+  }
+};
 
-  // INTERACTIVE DASHBOARD PREVIEW
-  function updatePreview(type, el) {
-    document.querySelectorAll('.p-nav-item').forEach(n => n.classList.remove('active'));
-    el.classList.add('active');
-    const content = document.getElementById('p-content');
-    
-    if(type === 'execute') {
-      content.innerHTML = `<div class="p-header"><h2 class="p-title">Execute.</h2><div style="text-align:right"><div style="font-size:2rem; font-weight:800; color:var(--accent)">94%</div><div style="font-family:'Space Mono'; font-size:0.55rem; color:var(--muted);">DAILY SCORE</div></div></div><div class="p-card"><div style="font-family:'Space Mono'; font-size:0.55rem; color:var(--muted); margin-bottom:16px;">DAILY DIRECTIVES</div><div style="display:flex; justify-content:space-between; margin-bottom:12px; opacity:0.6;"><span>Morning Protocol</span><span style="color:var(--accent)">HIGH</span></div><div style="display:flex; justify-content:space-between;"><span>Deep Work Block</span><span style="color:var(--red)">CRIT</span></div></div>`;
-    } else if(type === 'trajectory') {
-      content.innerHTML = `<div class="p-header"><h2 class="p-title">Trajectory.</h2></div><div class="p-card" style="display:flex; align-items:flex-end; gap:4px; height:150px;">${Array(14).fill(0).map(() => `<div style="flex:1; background:var(--accent); height:${Math.random()*100+10}%; opacity:0.4;"></div>`).join('')}</div><div style="font-family:'Space Mono'; font-size:0.55rem; color:var(--muted); margin-top:16px; text-transform:uppercase;">Historical Mirror: Mass vs Consistency</div>`;
-    } else {
-      content.innerHTML = `<div class="p-header"><h2 class="p-title">Diagnostics.</h2></div><div class="p-card" style="border-left: 2px solid var(--accent); background:rgba(223,255,0,0.02)"><div style="font-family:'Space Mono'; font-size:0.55rem; color:var(--accent); margin-bottom:12px;">AI SITE REPORT</div><p style="font-size:0.9rem; line-height:1.6;">Strong momentum in deep work blocks. Strategic failure detected in recovery protocol. You are trading sleep for short term output. Correct course.</p></div>`;
-    }
+  async function handlePurchase() {
+    const { data: { session } } = await sb.auth.getSession();
+    const STRIPE_URL = 'https://buy.stripe.com/eVq6oI4PY5fC0ikfAH3sI00';
+    const returnUrl = encodeURIComponent(window.location.origin + '/app.html?success=true');
+    if (session?.user?.id) window.location.href = `${STRIPE_URL}?client_reference_id=${session.user.id}&return_url=${returnUrl}`;
+    else window.location.href = STRIPE_URL;
   }
 
-  function handlePurchase() { localStorage.setItem('vantage_access', 'purchased'); window.location.href = 'app.html'; }
   function operatorLogin() {
     const pw = prompt('Access code:');
     if (pw === 'VANTAGE_OPS_2026' || pw === 'VANTAGE_2026') {
       localStorage.setItem('vantage_access', 'operator');
       window.location.href = 'app.html';
-    }
+    } else if (pw) alert('Invalid code.');
   }
+
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  document.querySelectorAll('a, button, .interactive, input, select, textarea').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>
